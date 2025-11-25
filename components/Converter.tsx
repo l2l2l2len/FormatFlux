@@ -200,10 +200,10 @@ export const Converter: React.FC = () => {
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <Card className="border-slate-800 shadow-2xl bg-slate-900/50 backdrop-blur-md">
+      <Card className="border-slate-200 shadow-xl bg-white/50 backdrop-blur-md">
         <CardContent className="p-6 md:p-8">
           <TabsContainer value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-3 w-full max-w-md mx-auto mb-8 bg-slate-950 p-1.5 h-14 border-slate-800">
+            <TabsList className="grid grid-cols-3 w-full max-w-md mx-auto mb-8 bg-slate-100 p-1.5 h-14 border-slate-200">
               <TabsTrigger value="image" className="gap-2 text-base">
                 <ImageIcon size={18} /> Images
               </TabsTrigger>
@@ -226,15 +226,15 @@ export const Converter: React.FC = () => {
                     className={cn(
                       "group relative flex flex-col items-center justify-center w-full h-80 rounded-2xl border-2 border-dashed transition-all duration-300 cursor-pointer overflow-hidden",
                       fileError 
-                        ? "border-red-500/50 bg-red-900/10 hover:bg-red-900/20" 
-                        : "border-slate-700 bg-slate-900/50 hover:border-blue-500 hover:bg-slate-800"
+                        ? "border-red-500/50 bg-red-50 hover:bg-red-100" 
+                        : "border-slate-300 bg-slate-50/50 hover:border-blue-500 hover:bg-slate-100"
                     )}
                   >
-                    <div className="absolute inset-0 bg-grid-white/[0.02] [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
+                    <div className="absolute inset-0 bg-grid-black/[0.02] [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
                     <div className="relative z-10 flex flex-col items-center space-y-4 text-center p-6">
                       <div className={cn(
                         "p-4 rounded-full transition-transform duration-300 group-hover:scale-110 shadow-sm",
-                        fileError ? "bg-red-900/50 text-red-400" : "bg-slate-800 text-blue-400"
+                        fileError ? "bg-red-100 text-red-500" : "bg-white text-blue-500 border border-slate-100"
                       )}>
                         {fileError ? <AlertCircle size={40} /> : 
                            activeTab === 'image' ? <ImageIcon size={40} /> :
@@ -243,14 +243,14 @@ export const Converter: React.FC = () => {
                         }
                       </div>
                       <div className="space-y-1">
-                        <p className="text-xl font-semibold text-slate-200">
+                        <p className="text-xl font-semibold text-slate-800">
                           {fileError ? 'Invalid File' : 'Drop your file here'}
                         </p>
-                        <p className="text-sm text-slate-400">
+                        <p className="text-sm text-slate-500">
                           {fileError || 'or click to browse'}
                         </p>
                       </div>
-                      <p className="text-xs text-slate-500 mt-4">
+                      <p className="text-xs text-slate-400 mt-4">
                         Max 50MB • {
                           activeTab === 'image' ? 'JPG, PNG, GIF, BMP, WEBP' : 
                           activeTab === 'document' ? 'PDF, DOCX, XLSX' :
@@ -263,23 +263,23 @@ export const Converter: React.FC = () => {
                   <div className="flex flex-col md:flex-row gap-8 animate-in slide-in-from-bottom-4 duration-500">
                     {/* File Info Card */}
                     <div className="flex-1 space-y-6">
-                      <div className="flex items-start gap-4 p-4 rounded-xl bg-slate-950 border border-slate-800">
-                        <div className="h-20 w-20 rounded-lg overflow-hidden bg-slate-900 flex items-center justify-center shrink-0 shadow-sm border border-slate-800">
+                      <div className="flex items-start gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <div className="h-20 w-20 rounded-lg overflow-hidden bg-white flex items-center justify-center shrink-0 shadow-sm border border-slate-200">
                           {activeTab === 'image' && previewUrl ? (
                             <img src={previewUrl} alt="Preview" className="h-full w-full object-cover" />
                           ) : (
-                             activeTab === 'document' ? <FileText size={32} className="text-slate-500" /> :
-                             <FileType size={32} className="text-slate-500" />
+                             activeTab === 'document' ? <FileText size={32} className="text-slate-400" /> :
+                             <FileType size={32} className="text-slate-400" />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-slate-200 truncate" title={file.name}>{file.name}</h3>
+                          <h3 className="font-semibold text-slate-900 truncate" title={file.name}>{file.name}</h3>
                           <p className="text-sm text-slate-500">
                             {(file.size / 1024 / 1024).toFixed(2)} MB
                           </p>
                           <button 
                             onClick={resetState}
-                            className="text-xs text-red-400 hover:text-red-300 mt-2 font-medium flex items-center gap-1"
+                            className="text-xs text-red-500 hover:text-red-700 mt-2 font-medium flex items-center gap-1"
                           >
                             <X size={12} /> Remove File
                           </button>
@@ -289,7 +289,7 @@ export const Converter: React.FC = () => {
                       {/* Controls */}
                       <div className="space-y-6">
                         <div className="space-y-3">
-                          <label className="text-sm font-medium text-slate-300 flex items-center gap-2">
+                          <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
                              <Settings2 size={16} /> Target Format
                           </label>
                           <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
@@ -300,8 +300,8 @@ export const Converter: React.FC = () => {
                                 className={cn(
                                   "px-3 py-2 rounded-lg text-sm font-semibold transition-all border break-words",
                                   targetFormat === fmt
-                                    ? "bg-blue-600 text-white border-blue-500 shadow-md shadow-blue-900/20 scale-105"
-                                    : "bg-slate-800 text-slate-400 border-slate-700 hover:border-blue-500 hover:text-blue-400"
+                                    ? "bg-blue-600 text-white border-blue-500 shadow-md shadow-blue-500/20 scale-105"
+                                    : "bg-white text-slate-600 border-slate-200 hover:border-blue-500 hover:text-blue-500"
                                 )}
                               >
                                 {getFormatLabel(fmt)}
@@ -311,10 +311,10 @@ export const Converter: React.FC = () => {
                         </div>
 
                         {activeTab === 'image' && ['jpg', 'webp'].includes(targetFormat) && (
-                          <div className="space-y-4 p-4 bg-slate-950 rounded-xl border border-slate-800">
+                          <div className="space-y-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
                              <div className="flex justify-between">
-                                <label className="text-sm font-medium text-slate-300">Quality</label>
-                                <span className="text-sm text-blue-400 font-bold">{quality[0]}%</span>
+                                <label className="text-sm font-medium text-slate-700">Quality</label>
+                                <span className="text-sm text-blue-600 font-bold">{quality[0]}%</span>
                              </div>
                              <Slider 
                                 value={quality} 
@@ -336,8 +336,8 @@ export const Converter: React.FC = () => {
                               {isConverting ? 'Converting...' : 'Convert Now'}
                             </Button>
                         ) : (
-                             <div className="p-4 bg-green-950/30 rounded-xl border border-green-900/50 flex flex-col items-center gap-4 animate-in zoom-in-95">
-                                <div className="flex items-center gap-2 text-green-400 font-semibold">
+                             <div className="p-4 bg-green-50 rounded-xl border border-green-200 flex flex-col items-center gap-4 animate-in zoom-in-95">
+                                <div className="flex items-center gap-2 text-green-700 font-semibold">
                                     <CheckCircle2 size={20} /> Conversion Complete
                                 </div>
                                 <Button 
@@ -349,7 +349,7 @@ export const Converter: React.FC = () => {
                                 </Button>
                                 <button 
                                     onClick={() => setConvertedBlob(null)}
-                                    className="text-sm text-slate-500 hover:text-slate-300 underline"
+                                    className="text-sm text-slate-500 hover:text-slate-700 underline"
                                 >
                                     Convert another format
                                 </button>
@@ -383,11 +383,11 @@ export const Converter: React.FC = () => {
 
       {/* Loading Overlay */}
       {isConverting && (
-         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center">
-             <div className="bg-slate-900 p-8 rounded-2xl border border-slate-800 shadow-2xl max-w-sm w-full space-y-4 text-center mx-4">
+         <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
+             <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-2xl max-w-sm w-full space-y-4 text-center mx-4">
                  <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
-                 <h3 className="text-xl font-bold text-slate-100">Converting...</h3>
-                 <p className="text-slate-400">Processing your document...</p>
+                 <h3 className="text-xl font-bold text-slate-900">Converting...</h3>
+                 <p className="text-slate-500">Processing your document...</p>
                  <Progress value={progress} className="h-2" />
              </div>
          </div>
