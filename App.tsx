@@ -1,7 +1,8 @@
 import React from 'react';
 import { Converter } from './components/Converter';
 import { ToastProvider } from './components/ui/toast';
-import { Layers } from 'lucide-react';
+import { Layers, Users } from 'lucide-react';
+import { GoogleAd } from './components/GoogleAd';
 
 const Navbar = () => (
   <nav className="border-b border-brand-black/5 bg-cream-50/80 backdrop-blur-md sticky top-0 z-50">
@@ -16,12 +17,35 @@ const Navbar = () => (
   </nav>
 );
 
+const VisitCounter = () => {
+  const [count, setCount] = React.useState<number | null>(null);
+
+  React.useEffect(() => {
+    // Use a unique namespace for this app to track visits
+    // Using counterapi.dev which is free and public
+    fetch('https://api.counterapi.dev/v1/convertly-silvercrest-app/visits/up')
+      .then(res => res.json())
+      .then(data => setCount(data.count))
+      .catch(err => console.error("Counter API Error:", err));
+  }, []);
+
+  if (count === null) return null;
+
+  return (
+    <div className="flex items-center gap-2 text-xs font-bold text-brand-black/40 mt-4 bg-brand-black/5 px-4 py-1.5 rounded-full border border-brand-black/5">
+      <Users size={12} />
+      <span>{count.toLocaleString()} Visits</span>
+    </div>
+  );
+};
+
 const Footer = () => (
   <footer className="border-t border-brand-black/5 bg-cream-50 py-8 mt-auto">
-    <div className="container mx-auto px-4 flex justify-center text-center">
+    <div className="container mx-auto px-4 flex flex-col items-center justify-center text-center">
       <div className="text-brand-black/60 text-sm font-medium">
         Designed and Developed by Silvercrest Creative Studios
       </div>
+      <VisitCounter />
     </div>
   </footer>
 );
@@ -48,7 +72,15 @@ const App: React.FC = () => {
             </p>
           </div>
           
+          <div className="w-full max-w-5xl">
+            <GoogleAd />
+          </div>
+
           <Converter />
+          
+          <div className="w-full max-w-5xl mt-8">
+            <GoogleAd />
+          </div>
         </main>
         
         <Footer />
