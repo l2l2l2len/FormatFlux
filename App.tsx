@@ -2,7 +2,6 @@ import React from 'react';
 import { Converter } from './components/Converter';
 import { ToastProvider } from './components/ui/toast';
 import { Layers, Users } from 'lucide-react';
-import { GoogleAd } from './components/GoogleAd';
 
 const Navbar = () => (
   <nav className="border-b border-brand-black/5 bg-cream-50/80 backdrop-blur-md sticky top-0 z-50">
@@ -72,15 +71,7 @@ const App: React.FC = () => {
             </p>
           </div>
           
-          <div className="w-full max-w-5xl">
-            <GoogleAd />
-          </div>
-
           <Converter />
-          
-          <div className="w-full max-w-5xl mt-8">
-            <GoogleAd />
-          </div>
         </main>
         
         <Footer />
