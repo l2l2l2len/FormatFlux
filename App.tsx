@@ -1,8 +1,7 @@
 import React from 'react';
 import { Converter } from './components/Converter';
 import { ToastProvider } from './components/ui/toast';
-import { Layers, Github, Heart } from 'lucide-react';
-import { Button } from './components/ui/button';
+import { Layers } from 'lucide-react';
 
 const Navbar = () => (
   <nav className="border-b border-slate-800 bg-slate-950/50 backdrop-blur-md sticky top-0 z-50">
@@ -13,24 +12,15 @@ const Navbar = () => (
         </div>
         <span className="font-bold text-xl tracking-tight">FormatFlux</span>
       </div>
-      <div className="flex items-center gap-4">
-        <a href="#" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Documentation</a>
-        <Button variant="outline" size="sm" className="hidden sm:flex items-center gap-2">
-           <Github size={16} /> GitHub
-        </Button>
-      </div>
     </div>
   </nav>
 );
 
 const Footer = () => (
   <footer className="border-t border-slate-800 bg-slate-950 py-8 mt-auto">
-    <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div className="container mx-auto px-4 flex justify-center text-center">
       <div className="text-slate-500 text-sm">
         © 2024 FormatFlux. Client-side processing only.
-      </div>
-      <div className="flex items-center gap-1 text-sm text-slate-500">
-        Made with <Heart size={14} className="text-red-500 fill-red-500" /> by DevTeam
       </div>
     </div>
   </footer>
