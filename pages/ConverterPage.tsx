@@ -202,7 +202,7 @@ export const ConverterPage: React.FC = () => {
     <div className="min-h-screen p-4 md:p-8 max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500">
       <header className="text-center space-y-4 mb-12">
         <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
-          FormatFlux
+          Convertly
         </h1>
         <p className="text-slate-400 text-lg">
           Secure, client-side file conversion. Your files never leave your device.

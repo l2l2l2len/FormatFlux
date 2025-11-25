@@ -10,7 +10,7 @@ const Navbar = () => (
         <div className="bg-blue-600 p-1.5 rounded-lg text-white">
           <Layers size={20} />
         </div>
-        <span className="font-bold text-xl tracking-tight text-slate-900">FormatFlux</span>
+        <span className="font-bold text-xl tracking-tight text-slate-900">Convertly</span>
       </div>
     </div>
   </nav>
@@ -20,7 +20,7 @@ const Footer = () => (
   <footer className="border-t border-slate-200 bg-slate-50 py-8 mt-auto">
     <div className="container mx-auto px-4 flex justify-center text-center">
       <div className="text-slate-500 text-sm">
-        © 2024 FormatFlux. Client-side processing only.
+        Designed and Developed by Silvercrest Creative Studios
       </div>
     </div>
   </footer>
