@@ -27,7 +27,7 @@ interface TabsListProps {
 }
 
 export const TabsList: React.FC<TabsListProps> = ({ children, className }) => (
-  <div className={cn("inline-flex h-12 items-center justify-center rounded-lg bg-slate-100 p-1 text-slate-500 w-full mb-6 border border-slate-200", className)}>
+  <div className={cn("inline-flex h-14 items-center justify-center rounded-xl bg-cream-100 p-1.5 text-brand-black/60 w-full mb-8 border border-cream-200/50", className)}>
     {children}
   </div>
 );
@@ -46,8 +46,8 @@ export const TabsTrigger: React.FC<TabsTriggerProps> = ({ value, children, curre
     <button
       onClick={() => onValueChange?.(value)}
       className={cn(
-        "inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-full h-full",
-        isActive ? "bg-white text-blue-600 shadow-sm" : "hover:bg-white/60 hover:text-slate-900",
+        "inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-2 text-sm font-bold ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-full h-full",
+        isActive ? "bg-brand-yellow text-brand-black shadow-sm" : "hover:bg-white/50 hover:text-brand-black",
         className
       )}
     >
@@ -65,7 +65,7 @@ interface TabsContentProps {
 
 export const TabsContent: React.FC<TabsContentProps> = ({ value, currentValue, children, className }) => {
   if (value !== currentValue) return null;
-  return <div className={cn("mt-2 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 animate-in fade-in-50 zoom-in-95 duration-200", className)}>{children}</div>;
+  return <div className={cn("mt-2 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2 animate-in fade-in-50 zoom-in-95 duration-200", className)}>{children}</div>;
 };
 
 // Wrapper to inject props

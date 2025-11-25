@@ -9,24 +9,24 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', ...props }, ref) => {
     const variants = {
-      primary: 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm shadow-blue-500/20',
-      secondary: 'bg-slate-100 text-slate-900 hover:bg-slate-200',
-      outline: 'border border-slate-200 bg-transparent hover:bg-slate-50 text-slate-700',
-      ghost: 'hover:bg-slate-100 text-slate-700',
-      destructive: 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100',
+      primary: 'bg-brand-yellow text-brand-black hover:bg-brand-yellow-hover border border-brand-black/10 shadow-sm font-bold',
+      secondary: 'bg-white text-brand-black hover:bg-cream-100 border border-cream-200 shadow-sm',
+      outline: 'border-2 border-brand-black bg-transparent hover:bg-brand-black hover:text-white text-brand-black font-semibold',
+      ghost: 'hover:bg-brand-black/5 text-brand-black font-medium',
+      destructive: 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 font-medium',
     };
 
     const sizes = {
       sm: 'h-8 px-3 text-xs',
-      md: 'h-10 px-4 py-2 text-sm',
-      lg: 'h-12 px-8 text-base',
+      md: 'h-11 px-5 py-2 text-sm',
+      lg: 'h-14 px-8 text-base',
     };
 
     return (
       <button
         ref={ref}
         className={cn(
-          'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:pointer-events-none disabled:opacity-50',
+          'inline-flex items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]',
           variants[variant],
           sizes[size],
           className

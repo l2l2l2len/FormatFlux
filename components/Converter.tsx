@@ -200,10 +200,10 @@ export const Converter: React.FC = () => {
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <Card className="border-slate-200 shadow-xl bg-white/50 backdrop-blur-md">
-        <CardContent className="p-6 md:p-8">
+      <Card className="border-0 shadow-premium bg-white">
+        <CardContent className="p-6 md:p-10">
           <TabsContainer value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-3 w-full max-w-md mx-auto mb-8 bg-slate-100 p-1.5 h-14 border-slate-200">
+            <TabsList className="grid grid-cols-3 w-full max-w-md mx-auto mb-10 bg-cream-100 p-1.5 h-14 border border-cream-200">
               <TabsTrigger value="image" className="gap-2 text-base">
                 <ImageIcon size={18} /> Images
               </TabsTrigger>
@@ -226,15 +226,15 @@ export const Converter: React.FC = () => {
                     className={cn(
                       "group relative flex flex-col items-center justify-center w-full h-80 rounded-2xl border-2 border-dashed transition-all duration-300 cursor-pointer overflow-hidden",
                       fileError 
-                        ? "border-red-500/50 bg-red-50 hover:bg-red-100" 
-                        : "border-slate-300 bg-slate-50/50 hover:border-blue-500 hover:bg-slate-100"
+                        ? "border-red-300 bg-red-50 hover:bg-red-100" 
+                        : "border-brand-black/20 bg-cream-50 hover:border-brand-yellow hover:bg-cream-100"
                     )}
                   >
-                    <div className="absolute inset-0 bg-grid-black/[0.02] [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
-                    <div className="relative z-10 flex flex-col items-center space-y-4 text-center p-6">
+                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/graphy.png')] opacity-10" />
+                    <div className="relative z-10 flex flex-col items-center space-y-5 text-center p-6">
                       <div className={cn(
-                        "p-4 rounded-full transition-transform duration-300 group-hover:scale-110 shadow-sm",
-                        fileError ? "bg-red-100 text-red-500" : "bg-white text-blue-500 border border-slate-100"
+                        "p-5 rounded-full transition-transform duration-300 group-hover:scale-110 shadow-sm",
+                        fileError ? "bg-red-100 text-red-500" : "bg-brand-yellow text-brand-black border-2 border-brand-black"
                       )}>
                         {fileError ? <AlertCircle size={40} /> : 
                            activeTab === 'image' ? <ImageIcon size={40} /> :
@@ -242,66 +242,66 @@ export const Converter: React.FC = () => {
                            <Upload size={40} />
                         }
                       </div>
-                      <div className="space-y-1">
-                        <p className="text-xl font-semibold text-slate-800">
+                      <div className="space-y-2">
+                        <p className="text-2xl font-bold text-brand-black tracking-tight">
                           {fileError ? 'Invalid File' : 'Drop your file here'}
                         </p>
-                        <p className="text-sm text-slate-500">
+                        <p className="text-base text-brand-black/60 font-medium">
                           {fileError || 'or click to browse'}
                         </p>
                       </div>
-                      <p className="text-xs text-slate-400 mt-4">
+                      <div className="mt-4 px-4 py-1 bg-white border border-cream-200 rounded-full text-xs font-semibold text-brand-black/50 uppercase tracking-wider">
                         Max 50MB • {
                           activeTab === 'image' ? 'JPG, PNG, GIF, BMP, WEBP' : 
                           activeTab === 'document' ? 'PDF, DOCX, XLSX' :
                           'JSON, CSV, TXT'
                         }
-                      </p>
+                      </div>
                     </div>
                   </div>
                 ) : (
                   <div className="flex flex-col md:flex-row gap-8 animate-in slide-in-from-bottom-4 duration-500">
                     {/* File Info Card */}
                     <div className="flex-1 space-y-6">
-                      <div className="flex items-start gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
-                        <div className="h-20 w-20 rounded-lg overflow-hidden bg-white flex items-center justify-center shrink-0 shadow-sm border border-slate-200">
+                      <div className="flex items-start gap-5 p-5 rounded-2xl bg-cream-50 border border-cream-200">
+                        <div className="h-24 w-24 rounded-xl overflow-hidden bg-white flex items-center justify-center shrink-0 shadow-sm border border-cream-200">
                           {activeTab === 'image' && previewUrl ? (
                             <img src={previewUrl} alt="Preview" className="h-full w-full object-cover" />
                           ) : (
-                             activeTab === 'document' ? <FileText size={32} className="text-slate-400" /> :
-                             <FileType size={32} className="text-slate-400" />
+                             activeTab === 'document' ? <FileText size={40} className="text-brand-black/40" /> :
+                             <FileType size={40} className="text-brand-black/40" />
                           )}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-slate-900 truncate" title={file.name}>{file.name}</h3>
-                          <p className="text-sm text-slate-500">
+                        <div className="flex-1 min-w-0 py-1">
+                          <h3 className="font-bold text-lg text-brand-black truncate" title={file.name}>{file.name}</h3>
+                          <p className="text-sm font-medium text-brand-black/50 mt-1">
                             {(file.size / 1024 / 1024).toFixed(2)} MB
                           </p>
                           <button 
                             onClick={resetState}
-                            className="text-xs text-red-500 hover:text-red-700 mt-2 font-medium flex items-center gap-1"
+                            className="text-xs text-red-600 hover:text-red-700 mt-3 font-bold flex items-center gap-1 uppercase tracking-wide"
                           >
-                            <X size={12} /> Remove File
+                            <X size={14} strokeWidth={3} /> Remove
                           </button>
                         </div>
                       </div>
 
                       {/* Controls */}
-                      <div className="space-y-6">
-                        <div className="space-y-3">
-                          <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
+                      <div className="space-y-8">
+                        <div className="space-y-4">
+                          <label className="text-sm font-bold text-brand-black/70 flex items-center gap-2 uppercase tracking-wide">
                              <Settings2 size={16} /> Target Format
                           </label>
-                          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                          <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                             {getAvailableFormats().map(fmt => (
                               <button
                                 key={fmt}
                                 onClick={() => setTargetFormat(fmt)}
                                 className={cn(
-                                  "px-3 py-2 rounded-lg text-sm font-semibold transition-all border break-words",
+                                  "px-4 py-3 rounded-xl text-sm font-bold transition-all border-2 break-words",
                                   targetFormat === fmt
-                                    ? "bg-blue-600 text-white border-blue-500 shadow-md shadow-blue-500/20 scale-105"
-                                    : "bg-white text-slate-600 border-slate-200 hover:border-blue-500 hover:text-blue-500"
+                                    ? "bg-brand-black text-brand-yellow border-brand-black shadow-lg scale-105"
+                                    : "bg-white text-brand-black/60 border-cream-200 hover:border-brand-yellow hover:text-brand-black"
                                 )}
                               >
                                 {getFormatLabel(fmt)}
@@ -311,10 +311,10 @@ export const Converter: React.FC = () => {
                         </div>
 
                         {activeTab === 'image' && ['jpg', 'webp'].includes(targetFormat) && (
-                          <div className="space-y-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
-                             <div className="flex justify-between">
-                                <label className="text-sm font-medium text-slate-700">Quality</label>
-                                <span className="text-sm text-blue-600 font-bold">{quality[0]}%</span>
+                          <div className="space-y-4 p-5 bg-cream-50 rounded-2xl border border-cream-200">
+                             <div className="flex justify-between items-center">
+                                <label className="text-sm font-bold text-brand-black/70 uppercase tracking-wide">Quality</label>
+                                <span className="px-2 py-0.5 bg-brand-yellow rounded text-sm text-brand-black font-bold border border-brand-black/10">{quality[0]}%</span>
                              </div>
                              <Slider 
                                 value={quality} 
@@ -329,29 +329,29 @@ export const Converter: React.FC = () => {
                         {!convertedBlob ? (
                             <Button 
                               size="lg" 
-                              className="w-full text-lg shadow-lg shadow-blue-500/20"
+                              className="w-full text-lg shadow-xl shadow-brand-yellow/20"
                               onClick={handleConvert}
                               disabled={isConverting || !targetFormat}
                             >
-                              {isConverting ? 'Converting...' : 'Convert Now'}
+                              {isConverting ? 'Processing...' : 'CONVERT NOW'}
                             </Button>
                         ) : (
-                             <div className="p-4 bg-green-50 rounded-xl border border-green-200 flex flex-col items-center gap-4 animate-in zoom-in-95">
-                                <div className="flex items-center gap-2 text-green-700 font-semibold">
-                                    <CheckCircle2 size={20} /> Conversion Complete
+                             <div className="p-6 bg-brand-yellow/10 rounded-2xl border-2 border-brand-yellow flex flex-col items-center gap-5 animate-in zoom-in-95">
+                                <div className="flex items-center gap-2 text-brand-black font-bold text-lg">
+                                    <CheckCircle2 size={24} className="text-green-600" /> Conversion Complete
                                 </div>
                                 <Button 
                                   size="lg" 
-                                  className="w-full bg-green-600 hover:bg-green-700 shadow-lg shadow-green-500/20"
+                                  className="w-full bg-brand-black text-brand-yellow hover:bg-black shadow-xl"
                                   onClick={handleDownload}
                                 >
                                   <Download className="mr-2" size={20} /> Download Result
                                 </Button>
                                 <button 
                                     onClick={() => setConvertedBlob(null)}
-                                    className="text-sm text-slate-500 hover:text-slate-700 underline"
+                                    className="text-sm font-semibold text-brand-black/50 hover:text-brand-black underline"
                                 >
-                                    Convert another format
+                                    Convert another file
                                 </button>
                              </div>
                         )}
@@ -383,12 +383,14 @@ export const Converter: React.FC = () => {
 
       {/* Loading Overlay */}
       {isConverting && (
-         <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
-             <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-2xl max-w-sm w-full space-y-4 text-center mx-4">
-                 <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
-                 <h3 className="text-xl font-bold text-slate-900">Converting...</h3>
-                 <p className="text-slate-500">Processing your document...</p>
-                 <Progress value={progress} className="h-2" />
+         <div className="fixed inset-0 bg-cream-50/90 backdrop-blur-sm z-50 flex items-center justify-center">
+             <div className="bg-white p-10 rounded-3xl border border-cream-200 shadow-2xl max-w-sm w-full space-y-6 text-center mx-4">
+                 <div className="w-16 h-16 border-4 border-brand-yellow border-t-brand-black rounded-full animate-spin mx-auto" />
+                 <div className="space-y-2">
+                    <h3 className="text-2xl font-black text-brand-black">CONVERTING</h3>
+                    <p className="text-brand-black/50 font-medium">Processing your file...</p>
+                 </div>
+                 <Progress value={progress} className="h-3" />
              </div>
          </div>
       )}

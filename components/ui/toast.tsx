@@ -41,24 +41,24 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <ToastContext.Provider value={{ addToast, removeToast }}>
       {children}
-      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
+      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-3">
         {toasts.map((toast) => (
           <div
             key={toast.id}
             className={cn(
-              "flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white min-w-[300px] animate-in slide-in-from-right-full transition-all",
-              toast.type === 'success' && "bg-green-600",
-              toast.type === 'error' && "bg-red-600",
-              toast.type === 'info' && "bg-blue-600"
+              "flex items-center gap-3 px-5 py-4 rounded-xl shadow-premium border min-w-[320px] animate-in slide-in-from-right-full transition-all",
+              toast.type === 'success' && "bg-brand-black text-brand-yellow border-brand-yellow",
+              toast.type === 'error' && "bg-red-50 text-red-900 border-red-200",
+              toast.type === 'info' && "bg-white text-brand-black border-cream-200"
             )}
           >
-            {toast.type === 'success' && <CheckCircle size={20} />}
-            {toast.type === 'error' && <AlertCircle size={20} />}
-            {toast.type === 'info' && <Info size={20} />}
-            <span className="flex-1 text-sm font-medium">{toast.message}</span>
+            {toast.type === 'success' && <CheckCircle size={20} className="shrink-0" />}
+            {toast.type === 'error' && <AlertCircle size={20} className="shrink-0" />}
+            {toast.type === 'info' && <Info size={20} className="shrink-0" />}
+            <span className="flex-1 text-sm font-bold">{toast.message}</span>
             <button
               onClick={() => removeToast(toast.id)}
-              className="hover:bg-white/20 p-1 rounded-full transition-colors"
+              className="hover:bg-white/10 p-1 rounded-full transition-colors"
             >
               <X size={16} />
             </button>
