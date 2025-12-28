@@ -19,7 +19,7 @@ export const Slider: React.FC<SliderProps> = ({ value, min = 0, max = 100, step 
 
   return (
     <div className={cn("relative flex w-full touch-none select-none items-center", className)}>
-      <div className="relative h-2 w-full grow overflow-hidden rounded-full bg-ink/10 dark:bg-white/10">
+      <div className="relative h-2 w-full grow overflow-hidden rounded-full bg-ink/10">
         <div
             className="absolute h-full bg-gradient-to-r from-accent-indigo to-accent-blue rounded-full"
             style={{ width: `${percentage}%` }}
