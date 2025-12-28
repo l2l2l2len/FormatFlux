@@ -1,69 +1,21 @@
 import React, { useEffect, useRef } from 'react';
 import { Converter } from './components/Converter';
 import { ToastProvider } from './components/ui/toast';
-import { Layers, Users, Scan, Shield, Zap, Upload, Settings, Download, ArrowRight } from 'lucide-react';
-
-// Animated Liquid Wave Background
-const LiquidWaveBackground: React.FC = () => {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-midnight via-midnight to-midnight-light opacity-90" />
-
-      {/* Animated waves */}
-      <svg
-        className="absolute bottom-0 left-0 w-full h-80"
-        viewBox="0 0 1920 320"
-        preserveAspectRatio="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <linearGradient id="waveGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#6366f1" stopOpacity="0.15" />
-            <stop offset="50%" stopColor="#3b82f6" stopOpacity="0.1" />
-            <stop offset="100%" stopColor="#6366f1" stopOpacity="0.15" />
-          </linearGradient>
-          <linearGradient id="waveGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.1" />
-            <stop offset="50%" stopColor="#6366f1" stopOpacity="0.08" />
-            <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.1" />
-          </linearGradient>
-        </defs>
-
-        {/* Wave 1 - Back */}
-        <path
-          className="animate-wave-slow"
-          fill="url(#waveGradient2)"
-          d="M0,160 C320,300 420,240 640,160 C880,80 900,200 1200,160 C1400,120 1600,200 1920,160 L1920,320 L0,320 Z"
-        />
-
-        {/* Wave 2 - Front */}
-        <path
-          className="animate-wave"
-          fill="url(#waveGradient1)"
-          d="M0,200 C280,120 520,280 720,200 C920,120 1100,240 1400,180 C1600,140 1800,220 1920,200 L1920,320 L0,320 Z"
-        />
-      </svg>
-
-      {/* Floating orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent-indigo/10 rounded-full blur-3xl animate-float" />
-      <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-accent-blue/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '-2s' }} />
-    </div>
-  );
-};
+import { BackgroundWaves } from './components/BackgroundWaves';
+import { Layers, Users, Scan, Shield, Zap, Upload, Settings, Download } from 'lucide-react';
 
 // Navbar Component
 const Navbar: React.FC = () => (
-  <nav className="glass sticky top-0 z-50">
+  <nav className="glass sticky top-0 z-50 shadow-soft">
     <div className="container mx-auto px-4 h-16 flex items-center justify-between">
       <div className="flex items-center gap-3">
         <div className="bg-gradient-to-br from-accent-indigo to-accent-blue p-2 rounded-xl shadow-glow-sm">
           <Layers size={20} className="text-white" />
         </div>
-        <span className="font-serif font-bold text-xl tracking-tight text-text-primary">Convertly</span>
+        <span className="font-serif font-bold text-xl tracking-tight text-ink">Convertly</span>
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-xs font-medium text-text-muted px-3 py-1.5 rounded-full glass">
+        <span className="text-xs font-medium text-slate px-3 py-1.5 rounded-full glass">
           100% Client-Side
         </span>
       </div>
@@ -85,7 +37,7 @@ const VisitCounter: React.FC = () => {
   if (count === null) return null;
 
   return (
-    <div className="flex items-center gap-2 text-xs font-medium text-text-muted glass px-4 py-2 rounded-full">
+    <div className="flex items-center gap-2 text-xs font-medium text-slate glass px-4 py-2 rounded-full">
       <Users size={12} />
       <span>{count.toLocaleString()} Visits</span>
     </div>
@@ -126,16 +78,16 @@ const BentoCard: React.FC<BentoCardProps> = ({ icon, title, description, bgColor
   return (
     <div
       ref={cardRef}
-      className={`${bgColor} rounded-3xl p-8 transition-all duration-700 hover:scale-[1.02] hover:shadow-glow ${
+      className={`${bgColor} rounded-3xl p-8 transition-all duration-700 hover:scale-[1.02] shadow-soft hover:shadow-lg ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
       }`}
       style={{ transitionDelay: delay }}
     >
-      <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mb-6">
+      <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-6">
         {icon}
       </div>
-      <h3 className="font-serif text-2xl font-bold text-text-primary mb-3">{title}</h3>
-      <p className="text-text-secondary leading-relaxed">{description}</p>
+      <h3 className="font-serif text-2xl font-bold text-ink mb-3">{title}</h3>
+      <p className="text-ink-light leading-relaxed">{description}</p>
     </div>
   );
 };
@@ -149,31 +101,31 @@ const BentoSection: React.FC = () => {
           <span className="text-xs font-semibold uppercase tracking-widest text-accent-indigo mb-4 block">
             Features
           </span>
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-text-primary">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold text-ink">
             Built for the Modern Web
           </h2>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           <BentoCard
-            icon={<Scan size={28} className="text-rose-300" />}
+            icon={<Scan size={28} className="text-rose-500" />}
             title="AI-Powered OCR"
             description="Turn scanned documents and images into editable, searchable text with advanced optical character recognition."
-            bgColor="bg-muted-rose"
+            bgColor="bg-bento-rose"
             delay="0s"
           />
           <BentoCard
-            icon={<Shield size={28} className="text-emerald-300" />}
+            icon={<Shield size={28} className="text-emerald-500" />}
             title="Privacy First"
             description="100% browser-based conversion. Your files never leave your device or touch any external servers."
-            bgColor="bg-muted-sage"
+            bgColor="bg-bento-sage"
             delay="0.15s"
           />
           <BentoCard
-            icon={<Zap size={28} className="text-indigo-300" />}
+            icon={<Zap size={28} className="text-indigo-500" />}
             title="Batch Mode"
             description="Convert hundreds of files instantly with our lightning-fast batch processing engine."
-            bgColor="bg-muted-indigo"
+            bgColor="bg-bento-indigo"
             delay="0.3s"
           />
         </div>
@@ -222,15 +174,15 @@ const Step: React.FC<StepProps> = ({ number, icon, title, description, delay = '
       style={{ transitionDelay: delay }}
     >
       <div className="relative inline-block mb-6">
-        <div className="w-20 h-20 rounded-2xl glass-strong flex items-center justify-center mx-auto group hover:shadow-glow transition-shadow duration-300">
+        <div className="w-20 h-20 rounded-2xl bg-white shadow-soft hover:shadow-lg flex items-center justify-center mx-auto group transition-shadow duration-300">
           {icon}
         </div>
         <span className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-gradient-to-br from-accent-indigo to-accent-blue text-white text-sm font-bold flex items-center justify-center">
           {number}
         </span>
       </div>
-      <h3 className="font-serif text-xl font-bold text-text-primary mb-2">{title}</h3>
-      <p className="text-text-secondary text-sm leading-relaxed max-w-xs mx-auto">{description}</p>
+      <h3 className="font-serif text-xl font-bold text-ink mb-2">{title}</h3>
+      <p className="text-ink-light text-sm leading-relaxed max-w-xs mx-auto">{description}</p>
     </div>
   );
 };
@@ -238,13 +190,13 @@ const Step: React.FC<StepProps> = ({ number, icon, title, description, delay = '
 // How It Works Section
 const HowItWorksSection: React.FC = () => {
   return (
-    <section className="py-24 relative glass">
+    <section className="py-24 relative bg-paper-dark/50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <span className="text-xs font-semibold uppercase tracking-widest text-accent-blue mb-4 block">
             Simple Process
           </span>
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-text-primary">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold text-ink">
             How It Works
           </h2>
         </div>
@@ -282,15 +234,15 @@ const HowItWorksSection: React.FC = () => {
 
 // Footer Component
 const Footer: React.FC = () => (
-  <footer className="glass py-12 mt-auto">
+  <footer className="py-12 mt-auto bg-paper-dark/30 border-t border-ink/5">
     <div className="container mx-auto px-4 flex flex-col items-center justify-center text-center space-y-4">
       <div className="flex items-center gap-3 mb-4">
         <div className="bg-gradient-to-br from-accent-indigo to-accent-blue p-1.5 rounded-lg">
           <Layers size={16} className="text-white" />
         </div>
-        <span className="font-serif font-semibold text-text-primary">Convertly</span>
+        <span className="font-serif font-semibold text-ink">Convertly</span>
       </div>
-      <div className="text-text-muted text-sm font-medium">
+      <div className="text-slate text-sm font-medium">
         Designed and Developed by Silvercrest Creative Studios
       </div>
       <VisitCounter />
@@ -301,22 +253,16 @@ const Footer: React.FC = () => (
 // Hero Section Component
 const HeroSection: React.FC = () => (
   <div className="text-center space-y-8 mb-16 max-w-3xl mx-auto pt-8">
-    <div
-      className="inline-block px-4 py-2 rounded-full glass text-text-secondary font-medium text-sm tracking-wide opacity-0 animate-fade-up"
-    >
+    <div className="inline-block px-4 py-2 rounded-full glass text-ink-light font-medium text-sm tracking-wide opacity-0 animate-fade-up">
       Premium File Conversion Tools
     </div>
-    <h1
-      className="font-serif text-5xl md:text-7xl font-bold tracking-tight text-text-primary leading-[1.1] opacity-0 animate-fade-up-delay"
-    >
+    <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight text-ink leading-[1.1] opacity-0 animate-fade-up-delay">
       Universal{' '}
       <span className="gradient-text">
         File Converter
       </span>
     </h1>
-    <p
-      className="text-text-secondary text-lg md:text-xl font-medium max-w-xl mx-auto leading-relaxed opacity-0 animate-fade-up-delay-2"
-    >
+    <p className="text-ink-light text-lg md:text-xl font-medium max-w-xl mx-auto leading-relaxed opacity-0 animate-fade-up-delay-2">
       Secure, fast, and 100% client-side. Convert your files without them ever leaving your browser.
     </p>
   </div>
@@ -326,9 +272,9 @@ const HeroSection: React.FC = () => (
 const App: React.FC = () => {
   return (
     <ToastProvider>
-      <div className="min-h-screen bg-midnight text-text-primary flex flex-col font-sans selection:bg-accent-indigo selection:text-white">
+      <div className="min-h-screen bg-paper text-ink flex flex-col font-sans selection:bg-accent-indigo selection:text-white">
         {/* Animated Background */}
-        <LiquidWaveBackground />
+        <BackgroundWaves />
 
         {/* Navbar */}
         <Navbar />
