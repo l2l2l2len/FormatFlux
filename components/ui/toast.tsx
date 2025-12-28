@@ -46,10 +46,10 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           <div
             key={toast.id}
             className={cn(
-              "flex items-center gap-3 px-5 py-4 rounded-xl shadow-premium border min-w-[320px] animate-in slide-in-from-right-full transition-all glass-strong",
-              toast.type === 'success' && "border-emerald-500/30 text-emerald-400",
-              toast.type === 'error' && "border-red-500/30 text-red-400",
-              toast.type === 'info' && "border-accent-indigo/30 text-text-primary"
+              "flex items-center gap-3 px-5 py-4 rounded-xl shadow-soft-lg dark:shadow-none border min-w-[320px] animate-in slide-in-from-right-full transition-all glass-strong",
+              toast.type === 'success' && "border-emerald-500/30 text-emerald-600 dark:text-emerald-400",
+              toast.type === 'error' && "border-red-500/30 text-red-600 dark:text-red-400",
+              toast.type === 'info' && "border-accent-indigo/30 text-ink dark:text-snow"
             )}
           >
             {toast.type === 'success' && <CheckCircle size={20} className="shrink-0" />}
@@ -58,7 +58,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             <span className="flex-1 text-sm font-semibold">{toast.message}</span>
             <button
               onClick={() => removeToast(toast.id)}
-              className="hover:bg-white/10 p-1 rounded-full transition-colors text-text-muted hover:text-text-primary"
+              className="hover:bg-ink/10 dark:hover:bg-white/10 p-1 rounded-full transition-colors text-ink-muted dark:text-snow-muted hover:text-ink dark:hover:text-snow"
             >
               <X size={16} />
             </button>
