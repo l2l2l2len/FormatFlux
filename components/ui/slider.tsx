@@ -19,9 +19,9 @@ export const Slider: React.FC<SliderProps> = ({ value, min = 0, max = 100, step 
 
   return (
     <div className={cn("relative flex w-full touch-none select-none items-center", className)}>
-      <div className="relative h-2 w-full grow overflow-hidden rounded-full bg-cream-200">
-        <div 
-            className="absolute h-full bg-brand-black" 
+      <div className="relative h-2 w-full grow overflow-hidden rounded-full bg-white/10">
+        <div
+            className="absolute h-full bg-gradient-to-r from-accent-indigo to-accent-blue rounded-full"
             style={{ width: `${percentage}%` }}
         />
       </div>
@@ -34,9 +34,9 @@ export const Slider: React.FC<SliderProps> = ({ value, min = 0, max = 100, step 
         onChange={handleChange}
         className="absolute h-full w-full opacity-0 cursor-pointer"
       />
-      <div 
-        className="absolute h-6 w-6 rounded-full border-4 border-brand-yellow bg-brand-black ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 pointer-events-none shadow-md"
-        style={{ left: `calc(${percentage}% - 12px)` }}
+      <div
+        className="absolute h-5 w-5 rounded-full bg-white shadow-glow-sm ring-2 ring-accent-indigo transition-all duration-150 pointer-events-none"
+        style={{ left: `calc(${percentage}% - 10px)` }}
       />
     </div>
   );

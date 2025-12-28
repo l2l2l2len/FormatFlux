@@ -9,11 +9,11 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', ...props }, ref) => {
     const variants = {
-      primary: 'bg-brand-yellow text-brand-black hover:bg-brand-yellow-hover border border-brand-black/10 shadow-sm font-bold',
-      secondary: 'bg-white text-brand-black hover:bg-cream-100 border border-cream-200 shadow-sm',
-      outline: 'border-2 border-brand-black bg-transparent hover:bg-brand-black hover:text-white text-brand-black font-semibold',
-      ghost: 'hover:bg-brand-black/5 text-brand-black font-medium',
-      destructive: 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 font-medium',
+      primary: 'bg-gradient-to-r from-accent-indigo to-accent-blue text-white hover:opacity-90 border border-white/10 shadow-glow-sm font-semibold',
+      secondary: 'glass text-text-primary hover:bg-white/10 border border-white/10 shadow-sm',
+      outline: 'border-2 border-white/20 bg-transparent hover:bg-white/10 text-text-primary font-semibold',
+      ghost: 'hover:bg-white/10 text-text-secondary hover:text-text-primary font-medium',
+      destructive: 'bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 font-medium',
     };
 
     const sizes = {
@@ -26,7 +26,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          'inline-flex items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-black focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]',
+          'inline-flex items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-indigo focus-visible:ring-offset-2 focus-visible:ring-offset-midnight disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]',
           variants[variant],
           sizes[size],
           className

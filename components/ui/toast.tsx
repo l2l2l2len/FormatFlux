@@ -46,19 +46,19 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           <div
             key={toast.id}
             className={cn(
-              "flex items-center gap-3 px-5 py-4 rounded-xl shadow-premium border min-w-[320px] animate-in slide-in-from-right-full transition-all",
-              toast.type === 'success' && "bg-brand-black text-brand-yellow border-brand-yellow",
-              toast.type === 'error' && "bg-red-50 text-red-900 border-red-200",
-              toast.type === 'info' && "bg-white text-brand-black border-cream-200"
+              "flex items-center gap-3 px-5 py-4 rounded-xl shadow-premium border min-w-[320px] animate-in slide-in-from-right-full transition-all glass-strong",
+              toast.type === 'success' && "border-emerald-500/30 text-emerald-400",
+              toast.type === 'error' && "border-red-500/30 text-red-400",
+              toast.type === 'info' && "border-accent-indigo/30 text-text-primary"
             )}
           >
             {toast.type === 'success' && <CheckCircle size={20} className="shrink-0" />}
             {toast.type === 'error' && <AlertCircle size={20} className="shrink-0" />}
             {toast.type === 'info' && <Info size={20} className="shrink-0" />}
-            <span className="flex-1 text-sm font-bold">{toast.message}</span>
+            <span className="flex-1 text-sm font-semibold">{toast.message}</span>
             <button
               onClick={() => removeToast(toast.id)}
-              className="hover:bg-white/10 p-1 rounded-full transition-colors"
+              className="hover:bg-white/10 p-1 rounded-full transition-colors text-text-muted hover:text-text-primary"
             >
               <X size={16} />
             </button>
