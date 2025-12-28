@@ -4,39 +4,133 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Convertly - Universal File Converter</title>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2135452345289406"
-     crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         theme: {
           extend: {
             colors: {
-              'brand-yellow': '#FFD600', // Vibrant Yellow
-              'brand-yellow-hover': '#E5C100',
-              'brand-black': '#1A1A1A', // Sharp Black
-              'cream-50': '#FAFAF5', // Light Warm Background
-              'cream-100': '#F2F0E9', // Slightly Darker Cream
-              'cream-200': '#E6E4DC', // Borders
-              primary: '#FFD600', 
-              'primary-foreground': '#1A1A1A',
+              // Dark theme primary colors
+              'midnight': '#030712',
+              'midnight-light': '#0a1628',
+              'midnight-lighter': '#111827',
+              // Accent colors
+              'accent-blue': '#3b82f6',
+              'accent-indigo': '#6366f1',
+              // Muted bento card backgrounds
+              'muted-rose': '#3f2832',
+              'muted-sage': '#2a3a2e',
+              'muted-indigo': '#2e3354',
+              // Text colors
+              'text-primary': '#f8fafc',
+              'text-secondary': '#94a3b8',
+              'text-muted': '#64748b',
+              // Glass effects
+              'glass-white': 'rgba(255, 255, 255, 0.05)',
+              'glass-border': 'rgba(255, 255, 255, 0.1)',
             },
             fontFamily: {
+              serif: ['Playfair Display', 'Georgia', 'serif'],
               sans: ['Inter', 'system-ui', 'sans-serif'],
             },
             boxShadow: {
-              'premium': '0 4px 20px -2px rgba(26, 26, 26, 0.08)',
+              'glow': '0 0 60px -12px rgba(99, 102, 241, 0.3)',
+              'glow-sm': '0 0 30px -8px rgba(99, 102, 241, 0.2)',
+              'premium': '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+            },
+            backdropBlur: {
+              'xl': '24px',
+              '2xl': '40px',
+            },
+            animation: {
+              'wave': 'wave 8s ease-in-out infinite',
+              'wave-slow': 'wave 12s ease-in-out infinite',
+              'float': 'float 6s ease-in-out infinite',
+              'fade-up': 'fadeUp 0.8s ease-out forwards',
+              'fade-up-delay': 'fadeUp 0.8s ease-out 0.2s forwards',
+              'fade-up-delay-2': 'fadeUp 0.8s ease-out 0.4s forwards',
+            },
+            keyframes: {
+              wave: {
+                '0%, 100%': { transform: 'translateY(0) scaleY(1)' },
+                '50%': { transform: 'translateY(-20px) scaleY(1.05)' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-10px)' },
+              },
+              fadeUp: {
+                '0%': { opacity: '0', transform: 'translateY(30px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
             }
           }
         }
       }
     </script>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap');
+
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: #374151 #030712;
+      }
+
+      *::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      *::-webkit-scrollbar-track {
+        background: #030712;
+      }
+
+      *::-webkit-scrollbar-thumb {
+        background-color: #374151;
+        border-radius: 4px;
+      }
+
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #FAFAF5;
-        color: #1A1A1A;
+        background-color: #030712;
+        color: #f8fafc;
+      }
+
+      .font-serif {
+        font-family: 'Playfair Display', Georgia, serif;
+      }
+
+      .glass {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .glass-strong {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .gradient-text {
+        background: linear-gradient(135deg, #f8fafc 0%, #94a3b8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .wave-path {
+        animation: wavePath 8s ease-in-out infinite;
+      }
+
+      @keyframes wavePath {
+        0%, 100% {
+          d: path('M0,160 C320,300 420,240 640,160 C880,80 900,200 1200,160 C1400,120 1600,200 1920,160 L1920,320 L0,320 Z');
+        }
+        50% {
+          d: path('M0,200 C280,120 520,280 720,200 C920,120 1100,240 1400,180 C1600,140 1800,220 1920,200 L1920,320 L0,320 Z');
+        }
       }
     </style>
     <!-- Conversion Libraries -->
@@ -59,7 +153,8 @@
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "clsx": "https://aistudiocdn.com/clsx@^2.1.1",
     "tailwind-merge": "https://aistudiocdn.com/tailwind-merge@^3.4.0",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0"
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^11.0.0"
   }
 }
 </script>

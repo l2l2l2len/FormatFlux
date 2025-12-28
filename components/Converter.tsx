@@ -1,30 +1,66 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Upload, FileType, Image as ImageIcon, FileText, Download, X, Settings2, CheckCircle2, AlertCircle } from 'lucide-react';
-import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
-import { TabsContainer, TabsList, TabsTrigger, TabsContent } from './ui/tabs';
 import { Slider } from './ui/slider';
 import { Progress } from './ui/progress';
 import { useToast } from './ui/toast';
 import { cn } from '../utils/cn';
-import { 
-  convertImage, 
-  convertData, 
+import {
+  convertImage,
+  convertData,
   convertDocument,
-  downloadBlob, 
-  IMAGE_FORMATS, 
-  DATA_FORMATS, 
-  type ImageFormat, 
+  downloadBlob,
+  IMAGE_FORMATS,
+  DATA_FORMATS,
+  type ImageFormat,
   type DataFormat,
   type DocumentFormat
 } from '../utils/fileConverter';
 
 type ConverterMode = 'image' | 'data' | 'document';
 
+// Category Toggle Pill Buttons
+interface CategoryToggleProps {
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+}
+
+const CategoryToggle: React.FC<CategoryToggleProps> = ({ activeTab, onTabChange }) => {
+  const categories = [
+    { id: 'image', label: 'Images', icon: ImageIcon },
+    { id: 'document', label: 'Documents', icon: FileText },
+    { id: 'data', label: 'Data', icon: FileType },
+  ];
+
+  return (
+    <div className="flex items-center justify-center gap-2 mb-8">
+      {categories.map((category) => {
+        const Icon = category.icon;
+        const isActive = activeTab === category.id;
+        return (
+          <button
+            key={category.id}
+            onClick={() => onTabChange(category.id)}
+            className={cn(
+              "flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300",
+              isActive
+                ? "bg-gradient-to-r from-accent-indigo to-accent-blue text-white shadow-glow-sm"
+                : "glass text-text-secondary hover:text-text-primary hover:bg-white/10"
+            )}
+          >
+            <Icon size={16} />
+            <span>{category.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
 export const Converter: React.FC = () => {
   const { addToast } = useToast();
   const [activeTab, setActiveTab] = useState<string>('image');
-  
+
   // File State
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -69,7 +105,7 @@ export const Converter: React.FC = () => {
       setFileError('File size exceeds 50MB limit.');
       return false;
     }
-    
+
     const ext = file.name.split('.').pop()?.toLowerCase() || '';
 
     if (type === 'image' && !file.type.startsWith('image/') && ext !== 'ico') {
@@ -90,7 +126,7 @@ export const Converter: React.FC = () => {
             return false;
         }
     }
-    
+
     return true;
   };
 
@@ -108,7 +144,7 @@ export const Converter: React.FC = () => {
     setFile(selectedFile);
     setConvertedBlob(null); // Clear previous result
     setProgress(0);
-    
+
     // Auto-select sensible default target for docs
     if (activeTab === 'document') {
         const ext = selectedFile.name.split('.').pop()?.toLowerCase();
@@ -116,7 +152,7 @@ export const Converter: React.FC = () => {
         if (ext === 'docx') setTargetFormat('pdf');
         if (ext === 'pdf') setTargetFormat('txt');
     }
-    
+
     // Generate preview for images
     if (activeTab === 'image') {
       const url = URL.createObjectURL(selectedFile);
@@ -128,10 +164,10 @@ export const Converter: React.FC = () => {
 
   const handleConvert = async () => {
     if (!file || !targetFormat) return;
-    
+
     setIsConverting(true);
     setProgress(10);
-    
+
     try {
       // Simulate progress steps for better UX
       const progressInterval = setInterval(() => {
@@ -199,171 +235,157 @@ export const Converter: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <Card className="border-0 shadow-premium bg-white">
-        <CardContent className="p-6 md:p-10">
-          <TabsContainer value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-3 w-full max-w-md mx-auto mb-10 bg-cream-100 p-1.5 h-14 border border-cream-200">
-              <TabsTrigger value="image" className="gap-2 text-base">
-                <ImageIcon size={18} /> Images
-              </TabsTrigger>
-              <TabsTrigger value="document" className="gap-2 text-base">
-                <FileText size={18} /> Documents
-              </TabsTrigger>
-              <TabsTrigger value="data" className="gap-2 text-base">
-                <FileType size={18} /> Data
-              </TabsTrigger>
-            </TabsList>
+    <div className="w-full max-w-3xl mx-auto space-y-6">
+      {/* Category Toggle Pills */}
+      <CategoryToggle activeTab={activeTab} onTabChange={setActiveTab} />
 
-            {['image', 'data', 'document'].includes(activeTab) && (
-              <TabsContent value={activeTab} className="space-y-8">
-                {/* Upload Area */}
-                {!file ? (
-                  <div
-                    onDragOver={handleDragOver}
-                    onDrop={handleDrop}
-                    onClick={() => fileInputRef.current?.click()}
-                    className={cn(
-                      "group relative flex flex-col items-center justify-center w-full h-80 rounded-2xl border-2 border-dashed transition-all duration-300 cursor-pointer overflow-hidden",
-                      fileError 
-                        ? "border-red-300 bg-red-50 hover:bg-red-100" 
-                        : "border-brand-black/20 bg-cream-50 hover:border-brand-yellow hover:bg-cream-100"
-                    )}
-                  >
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/graphy.png')] opacity-10" />
-                    <div className="relative z-10 flex flex-col items-center space-y-5 text-center p-6">
-                      <div className={cn(
-                        "p-5 rounded-full transition-transform duration-300 group-hover:scale-110 shadow-sm",
-                        fileError ? "bg-red-100 text-red-500" : "bg-brand-yellow text-brand-black border-2 border-brand-black"
-                      )}>
-                        {fileError ? <AlertCircle size={40} /> : 
-                           activeTab === 'image' ? <ImageIcon size={40} /> :
-                           activeTab === 'document' ? <FileText size={40} /> :
-                           <Upload size={40} />
-                        }
-                      </div>
-                      <div className="space-y-2">
-                        <p className="text-2xl font-bold text-brand-black tracking-tight">
-                          {fileError ? 'Invalid File' : 'Drop your file here'}
-                        </p>
-                        <p className="text-base text-brand-black/60 font-medium">
-                          {fileError || 'or click to browse'}
-                        </p>
-                      </div>
-                      <div className="mt-4 px-4 py-1 bg-white border border-cream-200 rounded-full text-xs font-semibold text-brand-black/50 uppercase tracking-wider">
-                        Max 50MB • {
-                          activeTab === 'image' ? 'JPG, PNG, GIF, BMP, WEBP' : 
-                          activeTab === 'document' ? 'PDF, DOCX, XLSX' :
-                          'JSON, CSV, TXT'
-                        }
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col md:flex-row gap-8 animate-in slide-in-from-bottom-4 duration-500">
-                    {/* File Info Card */}
-                    <div className="flex-1 space-y-6">
-                      <div className="flex items-start gap-5 p-5 rounded-2xl bg-cream-50 border border-cream-200">
-                        <div className="h-24 w-24 rounded-xl overflow-hidden bg-white flex items-center justify-center shrink-0 shadow-sm border border-cream-200">
-                          {activeTab === 'image' && previewUrl ? (
-                            <img src={previewUrl} alt="Preview" className="h-full w-full object-cover" />
-                          ) : (
-                             activeTab === 'document' ? <FileText size={40} className="text-brand-black/40" /> :
-                             <FileType size={40} className="text-brand-black/40" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0 py-1">
-                          <h3 className="font-bold text-lg text-brand-black truncate" title={file.name}>{file.name}</h3>
-                          <p className="text-sm font-medium text-brand-black/50 mt-1">
-                            {(file.size / 1024 / 1024).toFixed(2)} MB
-                          </p>
-                          <button 
-                            onClick={resetState}
-                            className="text-xs text-red-600 hover:text-red-700 mt-3 font-bold flex items-center gap-1 uppercase tracking-wide"
-                          >
-                            <X size={14} strokeWidth={3} /> Remove
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Controls */}
-                      <div className="space-y-8">
-                        <div className="space-y-4">
-                          <label className="text-sm font-bold text-brand-black/70 flex items-center gap-2 uppercase tracking-wide">
-                             <Settings2 size={16} /> Target Format
-                          </label>
-                          <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                            {getAvailableFormats().map(fmt => (
-                              <button
-                                key={fmt}
-                                onClick={() => setTargetFormat(fmt)}
-                                className={cn(
-                                  "px-4 py-3 rounded-xl text-sm font-bold transition-all border-2 break-words",
-                                  targetFormat === fmt
-                                    ? "bg-brand-black text-brand-yellow border-brand-black shadow-lg scale-105"
-                                    : "bg-white text-brand-black/60 border-cream-200 hover:border-brand-yellow hover:text-brand-black"
-                                )}
-                              >
-                                {getFormatLabel(fmt)}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        {activeTab === 'image' && ['jpg', 'webp'].includes(targetFormat) && (
-                          <div className="space-y-4 p-5 bg-cream-50 rounded-2xl border border-cream-200">
-                             <div className="flex justify-between items-center">
-                                <label className="text-sm font-bold text-brand-black/70 uppercase tracking-wide">Quality</label>
-                                <span className="px-2 py-0.5 bg-brand-yellow rounded text-sm text-brand-black font-bold border border-brand-black/10">{quality[0]}%</span>
-                             </div>
-                             <Slider 
-                                value={quality} 
-                                onValueChange={setQuality} 
-                                min={10} 
-                                max={100} 
-                                step={1}
-                             />
-                          </div>
-                        )}
-                        
-                        {!convertedBlob ? (
-                            <Button 
-                              size="lg" 
-                              className="w-full text-lg shadow-xl shadow-brand-yellow/20"
-                              onClick={handleConvert}
-                              disabled={isConverting || !targetFormat}
-                            >
-                              {isConverting ? 'Processing...' : 'CONVERT NOW'}
-                            </Button>
-                        ) : (
-                             <div className="p-6 bg-brand-yellow/10 rounded-2xl border-2 border-brand-yellow flex flex-col items-center gap-5 animate-in zoom-in-95">
-                                <div className="flex items-center gap-2 text-brand-black font-bold text-lg">
-                                    <CheckCircle2 size={24} className="text-green-600" /> Conversion Complete
-                                </div>
-                                <Button 
-                                  size="lg" 
-                                  className="w-full bg-brand-black text-brand-yellow hover:bg-black shadow-xl"
-                                  onClick={handleDownload}
-                                >
-                                  <Download className="mr-2" size={20} /> Download Result
-                                </Button>
-                                <button 
-                                    onClick={() => setConvertedBlob(null)}
-                                    className="text-sm font-semibold text-brand-black/50 hover:text-brand-black underline"
-                                >
-                                    Convert another file
-                                </button>
-                             </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </TabsContent>
+      {/* Glass-morphic Converter Card */}
+      <div className="glass-strong rounded-3xl p-8 md:p-10 shadow-premium">
+        {/* Upload Area */}
+        {!file ? (
+          <div
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+            onClick={() => fileInputRef.current?.click()}
+            className={cn(
+              "group relative flex flex-col items-center justify-center w-full h-72 rounded-2xl border-2 border-dashed transition-all duration-300 cursor-pointer overflow-hidden",
+              fileError
+                ? "border-red-400/50 bg-red-500/5 hover:bg-red-500/10"
+                : "border-white/10 bg-white/5 hover:border-accent-indigo/50 hover:bg-white/10"
             )}
-          </TabsContainer>
-        </CardContent>
-      </Card>
+          >
+            {/* Subtle pattern overlay */}
+            <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_1px_1px,_rgba(255,255,255,0.15)_1px,_transparent_0)] bg-[length:24px_24px]" />
+
+            <div className="relative z-10 flex flex-col items-center space-y-5 text-center p-6">
+              <div className={cn(
+                "p-5 rounded-2xl transition-all duration-300 group-hover:scale-110",
+                fileError
+                  ? "bg-red-500/20 text-red-400"
+                  : "bg-gradient-to-br from-accent-indigo/20 to-accent-blue/20 text-accent-indigo"
+              )}>
+                {fileError ? <AlertCircle size={40} /> :
+                   activeTab === 'image' ? <ImageIcon size={40} /> :
+                   activeTab === 'document' ? <FileText size={40} /> :
+                   <Upload size={40} />
+                }
+              </div>
+              <div className="space-y-2">
+                <p className="text-xl font-semibold text-text-primary tracking-tight">
+                  {fileError ? 'Invalid File' : 'Drop your file here'}
+                </p>
+                <p className="text-sm text-text-secondary font-medium">
+                  {fileError || 'or click to browse'}
+                </p>
+              </div>
+              <div className="mt-2 px-4 py-1.5 glass rounded-full text-xs font-medium text-text-muted uppercase tracking-wider">
+                Max 50MB • {
+                  activeTab === 'image' ? 'JPG, PNG, GIF, BMP, WEBP' :
+                  activeTab === 'document' ? 'PDF, DOCX, XLSX' :
+                  'JSON, CSV, TXT'
+                }
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* File Info Card */}
+            <div className="flex items-start gap-5 p-5 rounded-2xl bg-white/5 border border-white/10">
+              <div className="h-20 w-20 rounded-xl overflow-hidden bg-midnight-lighter flex items-center justify-center shrink-0 border border-white/10">
+                {activeTab === 'image' && previewUrl ? (
+                  <img src={previewUrl} alt="Preview" className="h-full w-full object-cover" />
+                ) : (
+                   activeTab === 'document' ? <FileText size={32} className="text-text-muted" /> :
+                   <FileType size={32} className="text-text-muted" />
+                )}
+              </div>
+              <div className="flex-1 min-w-0 py-1">
+                <h3 className="font-semibold text-lg text-text-primary truncate" title={file.name}>{file.name}</h3>
+                <p className="text-sm font-medium text-text-muted mt-1">
+                  {(file.size / 1024 / 1024).toFixed(2)} MB
+                </p>
+                <button
+                  onClick={resetState}
+                  className="text-xs text-red-400 hover:text-red-300 mt-3 font-semibold flex items-center gap-1 uppercase tracking-wide transition-colors"
+                >
+                  <X size={14} strokeWidth={3} /> Remove
+                </button>
+              </div>
+            </div>
+
+            {/* Controls */}
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <label className="text-sm font-semibold text-text-secondary flex items-center gap-2 uppercase tracking-wide">
+                   <Settings2 size={16} /> Target Format
+                </label>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                  {getAvailableFormats().map(fmt => (
+                    <button
+                      key={fmt}
+                      onClick={() => setTargetFormat(fmt)}
+                      className={cn(
+                        "px-4 py-3 rounded-xl text-sm font-semibold transition-all border",
+                        targetFormat === fmt
+                          ? "bg-gradient-to-r from-accent-indigo to-accent-blue text-white border-transparent shadow-glow-sm scale-105"
+                          : "bg-white/5 text-text-secondary border-white/10 hover:border-accent-indigo/50 hover:text-text-primary"
+                      )}
+                    >
+                      {getFormatLabel(fmt)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {activeTab === 'image' && ['jpg', 'webp'].includes(targetFormat) && (
+                <div className="space-y-4 p-5 bg-white/5 rounded-2xl border border-white/10">
+                   <div className="flex justify-between items-center">
+                      <label className="text-sm font-semibold text-text-secondary uppercase tracking-wide">Quality</label>
+                      <span className="px-3 py-1 bg-gradient-to-r from-accent-indigo to-accent-blue rounded-lg text-sm text-white font-semibold">{quality[0]}%</span>
+                   </div>
+                   <Slider
+                      value={quality}
+                      onValueChange={setQuality}
+                      min={10}
+                      max={100}
+                      step={1}
+                   />
+                </div>
+              )}
+
+              {!convertedBlob ? (
+                  <Button
+                    size="lg"
+                    className="w-full text-base shadow-glow"
+                    onClick={handleConvert}
+                    disabled={isConverting || !targetFormat}
+                  >
+                    {isConverting ? 'Processing...' : 'Convert Now'}
+                  </Button>
+              ) : (
+                   <div className="p-6 bg-emerald-500/10 rounded-2xl border border-emerald-500/30 flex flex-col items-center gap-5">
+                      <div className="flex items-center gap-2 text-text-primary font-semibold text-lg">
+                          <CheckCircle2 size={24} className="text-emerald-400" /> Conversion Complete
+                      </div>
+                      <Button
+                        size="lg"
+                        className="w-full"
+                        onClick={handleDownload}
+                      >
+                        <Download className="mr-2" size={20} /> Download Result
+                      </Button>
+                      <button
+                          onClick={() => setConvertedBlob(null)}
+                          className="text-sm font-medium text-text-muted hover:text-text-primary underline underline-offset-2 transition-colors"
+                      >
+                          Convert another file
+                      </button>
+                   </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Hidden Input */}
       <input
@@ -371,8 +393,8 @@ export const Converter: React.FC = () => {
         ref={fileInputRef}
         className="hidden"
         accept={
-            activeTab === 'image' ? "image/*" : 
-            activeTab === 'data' ? ".json,.csv,.txt" : 
+            activeTab === 'image' ? "image/*" :
+            activeTab === 'data' ? ".json,.csv,.txt" :
             activeTab === 'document' ? ".pdf,.docx,.xlsx,.xls" :
             "*"
         }
@@ -383,14 +405,14 @@ export const Converter: React.FC = () => {
 
       {/* Loading Overlay */}
       {isConverting && (
-         <div className="fixed inset-0 bg-cream-50/90 backdrop-blur-sm z-50 flex items-center justify-center">
-             <div className="bg-white p-10 rounded-3xl border border-cream-200 shadow-2xl max-w-sm w-full space-y-6 text-center mx-4">
-                 <div className="w-16 h-16 border-4 border-brand-yellow border-t-brand-black rounded-full animate-spin mx-auto" />
+         <div className="fixed inset-0 bg-midnight/90 backdrop-blur-md z-50 flex items-center justify-center">
+             <div className="glass-strong p-10 rounded-3xl shadow-premium max-w-sm w-full space-y-6 text-center mx-4">
+                 <div className="w-16 h-16 border-4 border-accent-indigo border-t-accent-blue rounded-full animate-spin mx-auto" />
                  <div className="space-y-2">
-                    <h3 className="text-2xl font-black text-brand-black">CONVERTING</h3>
-                    <p className="text-brand-black/50 font-medium">Processing your file...</p>
+                    <h3 className="text-2xl font-bold text-text-primary">Converting</h3>
+                    <p className="text-text-muted font-medium">Processing your file...</p>
                  </div>
-                 <Progress value={progress} className="h-3" />
+                 <Progress value={progress} className="h-2" />
              </div>
          </div>
       )}
