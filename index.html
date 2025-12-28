@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,21 +7,34 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
+        darkMode: 'class',
         theme: {
           extend: {
             colors: {
-              // Dark theme primary colors
+              // Light theme colors
+              'paper': '#faf8f5',
+              'paper-dark': '#f5f0e8',
+              'ink': '#1a1a2e',
+              'ink-light': '#2d2d44',
+              // Dark theme colors
               'midnight': '#030712',
               'midnight-light': '#0a1628',
               'midnight-lighter': '#111827',
-              // Accent colors
+              // Shared accent colors
               'accent-blue': '#3b82f6',
               'accent-indigo': '#6366f1',
-              // Muted bento card backgrounds
+              // Light mode bento cards
+              'bento-rose': '#fef2f2',
+              'bento-sage': '#f0fdf4',
+              'bento-indigo': '#eef2ff',
+              // Dark mode bento cards
               'muted-rose': '#3f2832',
               'muted-sage': '#2a3a2e',
               'muted-indigo': '#2e3354',
-              // Text colors
+              // Light mode text
+              'snow': '#f8fafc',
+              'slate': '#64748b',
+              // Dark mode text
               'text-primary': '#f8fafc',
               'text-secondary': '#94a3b8',
               'text-muted': '#64748b',
@@ -37,6 +50,7 @@
               'glow': '0 0 60px -12px rgba(99, 102, 241, 0.3)',
               'glow-sm': '0 0 30px -8px rgba(99, 102, 241, 0.2)',
               'premium': '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+              'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.1)',
             },
             backdropBlur: {
               'xl': '24px',
@@ -71,9 +85,29 @@
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap');
 
+      :root {
+        --bg-primary: #faf8f5;
+        --bg-secondary: #f5f0e8;
+        --text-primary: #1a1a2e;
+        --text-secondary: #2d2d44;
+        --text-muted: #64748b;
+        --glass-bg: rgba(255, 255, 255, 0.7);
+        --glass-border: rgba(0, 0, 0, 0.08);
+      }
+
+      .dark {
+        --bg-primary: #030712;
+        --bg-secondary: #0a1628;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(255, 255, 255, 0.08);
+      }
+
       * {
         scrollbar-width: thin;
-        scrollbar-color: #374151 #030712;
+        scrollbar-color: #374151 var(--bg-primary);
       }
 
       *::-webkit-scrollbar {
@@ -81,7 +115,7 @@
       }
 
       *::-webkit-scrollbar-track {
-        background: #030712;
+        background: var(--bg-primary);
       }
 
       *::-webkit-scrollbar-thumb {
@@ -91,8 +125,9 @@
 
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #030712;
-        color: #f8fafc;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        transition: background-color 0.3s ease, color 0.3s ease;
       }
 
       .font-serif {
@@ -100,20 +135,37 @@
       }
 
       .glass {
-        background: rgba(255, 255, 255, 0.03);
+        background: var(--glass-bg);
         backdrop-filter: blur(24px);
         -webkit-backdrop-filter: blur(24px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--glass-border);
       }
 
       .glass-strong {
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--glass-bg);
         backdrop-filter: blur(40px);
         -webkit-backdrop-filter: blur(40px);
+        border: 1px solid var(--glass-border);
+      }
+
+      .dark .glass {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .dark .glass-strong {
+        background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
       .gradient-text {
+        background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .dark .gradient-text {
         background: linear-gradient(135deg, #f8fafc 0%, #94a3b8 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -133,6 +185,19 @@
         }
       }
     </style>
+    <!-- Theme initialization script - prevents flash -->
+    <script>
+      (function() {
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
     <!-- Conversion Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
