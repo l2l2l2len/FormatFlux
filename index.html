@@ -10,57 +10,46 @@
         theme: {
           extend: {
             colors: {
-              // Dark theme primary colors
-              'midnight': '#030712',
-              'midnight-light': '#0a1628',
-              'midnight-lighter': '#111827',
-              // Accent colors
-              'accent-blue': '#3b82f6',
-              'accent-indigo': '#6366f1',
-              // Muted bento card backgrounds
-              'muted-rose': '#3f2832',
-              'muted-sage': '#2a3a2e',
-              'muted-indigo': '#2e3354',
-              // Text colors
-              'text-primary': '#f8fafc',
-              'text-secondary': '#94a3b8',
-              'text-muted': '#64748b',
-              // Glass effects
-              'glass-white': 'rgba(255, 255, 255, 0.05)',
-              'glass-border': 'rgba(255, 255, 255, 0.1)',
+              // Clean enterprise palette (ai71-inspired)
+              'white': '#ffffff',
+              'gray-50': '#f9fafb',
+              'gray-100': '#f3f4f6',
+              'gray-200': '#e5e7eb',
+              'gray-300': '#d1d5db',
+              'gray-400': '#9ca3af',
+              'gray-500': '#6b7280',
+              'gray-600': '#4b5563',
+              'gray-700': '#374151',
+              'gray-800': '#1f2937',
+              'gray-900': '#111827',
+              'black': '#000000',
+              // Brand blue (trust, technology)
+              'brand-blue': '#2563eb',
+              'brand-blue-dark': '#1d4ed8',
+              'brand-blue-light': '#3b82f6',
             },
             fontFamily: {
-              serif: ['Playfair Display', 'Georgia', 'serif'],
-              sans: ['Inter', 'system-ui', 'sans-serif'],
+              sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
             },
             boxShadow: {
-              'glow': '0 0 60px -12px rgba(99, 102, 241, 0.3)',
-              'glow-sm': '0 0 30px -8px rgba(99, 102, 241, 0.2)',
-              'premium': '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-            },
-            backdropBlur: {
-              'xl': '24px',
-              '2xl': '40px',
+              'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+              'md': '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+              'lg': '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+              'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1)',
             },
             animation: {
-              'wave': 'wave 8s ease-in-out infinite',
-              'wave-slow': 'wave 12s ease-in-out infinite',
-              'float': 'float 6s ease-in-out infinite',
-              'fade-up': 'fadeUp 0.8s ease-out forwards',
-              'fade-up-delay': 'fadeUp 0.8s ease-out 0.2s forwards',
-              'fade-up-delay-2': 'fadeUp 0.8s ease-out 0.4s forwards',
+              'fade-in': 'fadeIn 0.5s ease-out forwards',
+              'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+              'fade-in-up-delay': 'fadeInUp 0.6s ease-out 0.1s forwards',
+              'fade-in-up-delay-2': 'fadeInUp 0.6s ease-out 0.2s forwards',
             },
             keyframes: {
-              wave: {
-                '0%, 100%': { transform: 'translateY(0) scaleY(1)' },
-                '50%': { transform: 'translateY(-20px) scaleY(1.05)' },
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
               },
-              float: {
-                '0%, 100%': { transform: 'translateY(0)' },
-                '50%': { transform: 'translateY(-10px)' },
-              },
-              fadeUp: {
-                '0%': { opacity: '0', transform: 'translateY(30px)' },
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
                 '100%': { opacity: '1', transform: 'translateY(0)' },
               },
             }
@@ -69,68 +58,36 @@
       }
     </script>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
       * {
         scrollbar-width: thin;
-        scrollbar-color: #374151 #030712;
+        scrollbar-color: #d1d5db #f9fafb;
       }
 
       *::-webkit-scrollbar {
-        width: 8px;
+        width: 6px;
       }
 
       *::-webkit-scrollbar-track {
-        background: #030712;
+        background: #f9fafb;
       }
 
       *::-webkit-scrollbar-thumb {
-        background-color: #374151;
-        border-radius: 4px;
+        background-color: #d1d5db;
+        border-radius: 3px;
       }
 
       body {
-        font-family: 'Inter', sans-serif;
-        background-color: #030712;
-        color: #f8fafc;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background-color: #ffffff;
+        color: #111827;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
-      .font-serif {
-        font-family: 'Playfair Display', Georgia, serif;
-      }
-
-      .glass {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-      }
-
-      .glass-strong {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(40px);
-        -webkit-backdrop-filter: blur(40px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      .gradient-text {
-        background: linear-gradient(135deg, #f8fafc 0%, #94a3b8 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .wave-path {
-        animation: wavePath 8s ease-in-out infinite;
-      }
-
-      @keyframes wavePath {
-        0%, 100% {
-          d: path('M0,160 C320,300 420,240 640,160 C880,80 900,200 1200,160 C1400,120 1600,200 1920,160 L1920,320 L0,320 Z');
-        }
-        50% {
-          d: path('M0,200 C280,120 520,280 720,200 C920,120 1100,240 1400,180 C1600,140 1800,220 1920,200 L1920,320 L0,320 Z');
-        }
+      .text-balance {
+        text-wrap: balance;
       }
     </style>
     <!-- Conversion Libraries -->
