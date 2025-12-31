@@ -41,26 +41,26 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <ToastContext.Provider value={{ addToast, removeToast }}>
       {children}
-      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-3">
+      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
         {toasts.map((toast) => (
           <div
             key={toast.id}
             className={cn(
-              "flex items-center gap-3 px-5 py-4 rounded-xl shadow-premium border min-w-[320px] animate-in slide-in-from-right-full transition-all glass-strong",
-              toast.type === 'success' && "border-emerald-500/30 text-emerald-400",
-              toast.type === 'error' && "border-red-500/30 text-red-400",
-              toast.type === 'info' && "border-accent-indigo/30 text-text-primary"
+              "flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border min-w-[300px] bg-white",
+              toast.type === 'success' && "border-green-200",
+              toast.type === 'error' && "border-red-200",
+              toast.type === 'info' && "border-gray-200"
             )}
           >
-            {toast.type === 'success' && <CheckCircle size={20} className="shrink-0" />}
-            {toast.type === 'error' && <AlertCircle size={20} className="shrink-0" />}
-            {toast.type === 'info' && <Info size={20} className="shrink-0" />}
-            <span className="flex-1 text-sm font-semibold">{toast.message}</span>
+            {toast.type === 'success' && <CheckCircle size={18} className="text-green-500 shrink-0" />}
+            {toast.type === 'error' && <AlertCircle size={18} className="text-red-500 shrink-0" />}
+            {toast.type === 'info' && <Info size={18} className="text-gray-500 shrink-0" />}
+            <span className="flex-1 text-sm font-medium text-gray-900">{toast.message}</span>
             <button
               onClick={() => removeToast(toast.id)}
-              className="hover:bg-white/10 p-1 rounded-full transition-colors text-text-muted hover:text-text-primary"
+              className="hover:bg-gray-100 p-1 rounded transition-colors text-gray-400 hover:text-gray-600"
             >
-              <X size={16} />
+              <X size={14} />
             </button>
           </div>
         ))}
