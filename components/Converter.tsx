@@ -19,7 +19,7 @@ import {
 
 type ConverterMode = 'image' | 'data' | 'document';
 
-// Category Toggle Pill Buttons
+// Category Toggle - Clean tab style
 interface CategoryToggleProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
@@ -33,7 +33,7 @@ const CategoryToggle: React.FC<CategoryToggleProps> = ({ activeTab, onTabChange 
   ];
 
   return (
-    <div className="flex items-center justify-center gap-2 mb-8">
+    <div className="flex items-center justify-center gap-1 mb-8 bg-gray-100 p-1 rounded-lg w-fit mx-auto">
       {categories.map((category) => {
         const Icon = category.icon;
         const isActive = activeTab === category.id;
@@ -42,10 +42,10 @@ const CategoryToggle: React.FC<CategoryToggleProps> = ({ activeTab, onTabChange 
             key={category.id}
             onClick={() => onTabChange(category.id)}
             className={cn(
-              "flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300",
+              "flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all",
               isActive
-                ? "bg-gradient-to-r from-accent-indigo to-accent-blue text-white shadow-glow-sm"
-                : "glass text-text-secondary hover:text-text-primary hover:bg-white/10"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-600 hover:text-gray-900"
             )}
           >
             <Icon size={16} />
@@ -75,13 +75,11 @@ export const Converter: React.FC = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Reset state when tab changes
   useEffect(() => {
     resetState();
-    // Set default target formats based on tab
     if (activeTab === 'image') setTargetFormat('png');
     if (activeTab === 'data') setTargetFormat('json');
-    if (activeTab === 'document') setTargetFormat(''); // Depends on input
+    if (activeTab === 'document') setTargetFormat('');
   }, [activeTab]);
 
   const resetState = () => {
@@ -100,33 +98,24 @@ export const Converter: React.FC = () => {
   };
 
   const validateFile = (file: File, type: ConverterMode): boolean => {
-    const sizeLimit = 50 * 1024 * 1024; // 50MB
+    const sizeLimit = 50 * 1024 * 1024;
     if (file.size > sizeLimit) {
       setFileError('File size exceeds 50MB limit.');
       return false;
     }
-
     const ext = file.name.split('.').pop()?.toLowerCase() || '';
-
     if (type === 'image' && !file.type.startsWith('image/') && ext !== 'ico') {
-      setFileError('Please upload a valid image file (jpg, png, webp, gif, bmp).');
+      setFileError('Please upload a valid image file.');
       return false;
     }
-
-    if (type === 'data') {
-      if (!['json', 'csv', 'txt'].includes(ext)) {
-        setFileError('Please upload a .json, .csv, or .txt file.');
-        return false;
-      }
+    if (type === 'data' && !['json', 'csv', 'txt'].includes(ext)) {
+      setFileError('Please upload a .json, .csv, or .txt file.');
+      return false;
     }
-
-    if (type === 'document') {
-        if (!['pdf', 'docx', 'xlsx', 'xls'].includes(ext)) {
-            setFileError('Supported formats: PDF, Word (DOCX), Excel (XLSX).');
-            return false;
-        }
+    if (type === 'document' && !['pdf', 'docx', 'xlsx', 'xls'].includes(ext)) {
+      setFileError('Supported formats: PDF, Word (DOCX), Excel (XLSX).');
+      return false;
     }
-
     return true;
   };
 
@@ -140,58 +129,43 @@ export const Converter: React.FC = () => {
   const handleFileSelect = (selectedFile: File) => {
     setFileError(null);
     if (!validateFile(selectedFile, activeTab as ConverterMode)) return;
-
     setFile(selectedFile);
-    setConvertedBlob(null); // Clear previous result
+    setConvertedBlob(null);
     setProgress(0);
-
-    // Auto-select sensible default target for docs
     if (activeTab === 'document') {
-        const ext = selectedFile.name.split('.').pop()?.toLowerCase();
-        if (ext === 'xlsx' || ext === 'xls') setTargetFormat('csv');
-        if (ext === 'docx') setTargetFormat('pdf');
-        if (ext === 'pdf') setTargetFormat('txt');
+      const ext = selectedFile.name.split('.').pop()?.toLowerCase();
+      if (ext === 'xlsx' || ext === 'xls') setTargetFormat('csv');
+      if (ext === 'docx') setTargetFormat('pdf');
+      if (ext === 'pdf') setTargetFormat('txt');
     }
-
-    // Generate preview for images
     if (activeTab === 'image') {
-      const url = URL.createObjectURL(selectedFile);
-      setPreviewUrl(url);
+      setPreviewUrl(URL.createObjectURL(selectedFile));
     } else {
-        setPreviewUrl(null);
+      setPreviewUrl(null);
     }
   };
 
   const handleConvert = async () => {
     if (!file || !targetFormat) return;
-
     setIsConverting(true);
     setProgress(10);
-
     try {
-      // Simulate progress steps for better UX
       const progressInterval = setInterval(() => {
         setProgress(prev => Math.min(prev + 10, 90));
       }, 300);
-
       let blob: Blob;
-
       if (activeTab === 'image') {
         blob = await convertImage(file, targetFormat as ImageFormat, quality[0] / 100);
       } else if (activeTab === 'data') {
         blob = await convertData(file, targetFormat as DataFormat);
-      } else if (activeTab === 'document') {
-        blob = await convertDocument(file, targetFormat as DocumentFormat);
       } else {
-        throw new Error('Unknown mode');
+        blob = await convertDocument(file, targetFormat as DocumentFormat);
       }
-
       clearInterval(progressInterval);
       setProgress(100);
       setConvertedBlob(blob);
       addToast('Conversion successful!', 'success');
     } catch (err: any) {
-      console.error(err);
       addToast(err.message || 'Conversion failed', 'error');
       setProgress(0);
     } finally {
@@ -202,219 +176,181 @@ export const Converter: React.FC = () => {
   const handleDownload = () => {
     if (!convertedBlob || !file) return;
     const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.'));
-    // Handle special doc case where we return HTML as doc/docx
     let ext = targetFormat;
-    if (targetFormat === 'docx' && file.name.endsWith('.pdf')) {
-        ext = 'doc'; // Use .doc for the html-in-word hack
-    }
+    if (targetFormat === 'docx' && file.name.endsWith('.pdf')) ext = 'doc';
     downloadBlob(convertedBlob, `${nameWithoutExt}.${ext}`);
   };
 
-  // Helper to get compatible formats excluding current
   const getAvailableFormats = () => {
     if (!file) return [];
     const currentExt = file.name.split('.').pop()?.toLowerCase();
-
-    if (activeTab === 'image') {
-      return IMAGE_FORMATS.filter(f => f !== currentExt);
-    }
-    if (activeTab === 'data') {
-      return DATA_FORMATS.filter(f => f !== currentExt);
-    }
+    if (activeTab === 'image') return IMAGE_FORMATS.filter(f => f !== currentExt);
+    if (activeTab === 'data') return DATA_FORMATS.filter(f => f !== currentExt);
     if (activeTab === 'document') {
-        if (currentExt === 'xlsx' || currentExt === 'xls') return ['csv', 'json', 'html'];
-        if (currentExt === 'docx') return ['pdf', 'txt', 'html'];
-        if (currentExt === 'pdf') return ['txt', 'docx', 'jpg', 'png']; // docx here is text-only
+      if (currentExt === 'xlsx' || currentExt === 'xls') return ['csv', 'json', 'html'];
+      if (currentExt === 'docx') return ['pdf', 'txt', 'html'];
+      if (currentExt === 'pdf') return ['txt', 'docx', 'jpg', 'png'];
     }
     return [];
   };
 
-  const getFormatLabel = (fmt: string) => {
-      if (fmt === 'docx') return 'WORD (Text)';
-      return fmt.toUpperCase();
-  };
+  const getFormatLabel = (fmt: string) => fmt === 'docx' ? 'WORD (Text)' : fmt.toUpperCase();
 
   return (
-    <div className="w-full max-w-3xl mx-auto space-y-6">
-      {/* Category Toggle Pills */}
+    <div className="w-full max-w-2xl mx-auto space-y-6">
       <CategoryToggle activeTab={activeTab} onTabChange={setActiveTab} />
 
-      {/* Glass-morphic Converter Card */}
-      <div className="glass-strong rounded-3xl p-8 md:p-10 shadow-premium">
-        {/* Upload Area */}
+      <div className="bg-white border border-gray-200 rounded-xl shadow-sm">
         {!file ? (
           <div
             onDragOver={handleDragOver}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
             className={cn(
-              "group relative flex flex-col items-center justify-center w-full h-72 rounded-2xl border-2 border-dashed transition-all duration-300 cursor-pointer overflow-hidden",
+              "group flex flex-col items-center justify-center w-full h-64 rounded-xl border-2 border-dashed transition-all cursor-pointer m-4",
               fileError
-                ? "border-red-400/50 bg-red-500/5 hover:bg-red-500/10"
-                : "border-white/10 bg-white/5 hover:border-accent-indigo/50 hover:bg-white/10"
+                ? "border-red-300 bg-red-50"
+                : "border-gray-200 bg-gray-50 hover:border-brand-blue hover:bg-blue-50"
             )}
+            style={{ width: 'calc(100% - 2rem)' }}
           >
-            {/* Subtle pattern overlay */}
-            <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_1px_1px,_rgba(255,255,255,0.15)_1px,_transparent_0)] bg-[length:24px_24px]" />
-
-            <div className="relative z-10 flex flex-col items-center space-y-5 text-center p-6">
+            <div className="flex flex-col items-center space-y-4 text-center p-6">
               <div className={cn(
-                "p-5 rounded-2xl transition-all duration-300 group-hover:scale-110",
-                fileError
-                  ? "bg-red-500/20 text-red-400"
-                  : "bg-gradient-to-br from-accent-indigo/20 to-accent-blue/20 text-accent-indigo"
+                "p-4 rounded-full",
+                fileError ? "bg-red-100 text-red-500" : "bg-gray-100 text-gray-400 group-hover:bg-brand-blue/10 group-hover:text-brand-blue"
               )}>
-                {fileError ? <AlertCircle size={40} /> :
-                   activeTab === 'image' ? <ImageIcon size={40} /> :
-                   activeTab === 'document' ? <FileText size={40} /> :
-                   <Upload size={40} />
+                {fileError ? <AlertCircle size={32} /> :
+                  activeTab === 'image' ? <ImageIcon size={32} /> :
+                  activeTab === 'document' ? <FileText size={32} /> :
+                  <Upload size={32} />
                 }
               </div>
-              <div className="space-y-2">
-                <p className="text-xl font-semibold text-text-primary tracking-tight">
+              <div className="space-y-1">
+                <p className="text-base font-medium text-gray-900">
                   {fileError ? 'Invalid File' : 'Drop your file here'}
                 </p>
-                <p className="text-sm text-text-secondary font-medium">
+                <p className="text-sm text-gray-500">
                   {fileError || 'or click to browse'}
                 </p>
               </div>
-              <div className="mt-2 px-4 py-1.5 glass rounded-full text-xs font-medium text-text-muted uppercase tracking-wider">
+              <p className="text-xs text-gray-400">
                 Max 50MB • {
                   activeTab === 'image' ? 'JPG, PNG, GIF, BMP, WEBP' :
                   activeTab === 'document' ? 'PDF, DOCX, XLSX' :
                   'JSON, CSV, TXT'
                 }
-              </div>
+              </p>
             </div>
           </div>
         ) : (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            {/* File Info Card */}
-            <div className="flex items-start gap-5 p-5 rounded-2xl bg-white/5 border border-white/10">
-              <div className="h-20 w-20 rounded-xl overflow-hidden bg-midnight-lighter flex items-center justify-center shrink-0 border border-white/10">
+          <div className="p-6 space-y-6">
+            {/* File Info */}
+            <div className="flex items-start gap-4 p-4 rounded-lg bg-gray-50 border border-gray-100">
+              <div className="h-16 w-16 rounded-lg overflow-hidden bg-white border border-gray-200 flex items-center justify-center shrink-0">
                 {activeTab === 'image' && previewUrl ? (
                   <img src={previewUrl} alt="Preview" className="h-full w-full object-cover" />
+                ) : activeTab === 'document' ? (
+                  <FileText size={24} className="text-gray-400" />
                 ) : (
-                   activeTab === 'document' ? <FileText size={32} className="text-text-muted" /> :
-                   <FileType size={32} className="text-text-muted" />
+                  <FileType size={24} className="text-gray-400" />
                 )}
               </div>
-              <div className="flex-1 min-w-0 py-1">
-                <h3 className="font-semibold text-lg text-text-primary truncate" title={file.name}>{file.name}</h3>
-                <p className="text-sm font-medium text-text-muted mt-1">
-                  {(file.size / 1024 / 1024).toFixed(2)} MB
-                </p>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-medium text-gray-900 truncate" title={file.name}>{file.name}</h3>
+                <p className="text-sm text-gray-500 mt-0.5">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                 <button
                   onClick={resetState}
-                  className="text-xs text-red-400 hover:text-red-300 mt-3 font-semibold flex items-center gap-1 uppercase tracking-wide transition-colors"
+                  className="text-sm text-red-500 hover:text-red-600 mt-2 font-medium flex items-center gap-1 transition-colors"
                 >
-                  <X size={14} strokeWidth={3} /> Remove
+                  <X size={14} /> Remove
                 </button>
               </div>
             </div>
 
-            {/* Controls */}
-            <div className="space-y-6">
-              <div className="space-y-4">
-                <label className="text-sm font-semibold text-text-secondary flex items-center gap-2 uppercase tracking-wide">
-                   <Settings2 size={16} /> Target Format
-                </label>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                  {getAvailableFormats().map(fmt => (
-                    <button
-                      key={fmt}
-                      onClick={() => setTargetFormat(fmt)}
-                      className={cn(
-                        "px-4 py-3 rounded-xl text-sm font-semibold transition-all border",
-                        targetFormat === fmt
-                          ? "bg-gradient-to-r from-accent-indigo to-accent-blue text-white border-transparent shadow-glow-sm scale-105"
-                          : "bg-white/5 text-text-secondary border-white/10 hover:border-accent-indigo/50 hover:text-text-primary"
-                      )}
-                    >
-                      {getFormatLabel(fmt)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {activeTab === 'image' && ['jpg', 'webp'].includes(targetFormat) && (
-                <div className="space-y-4 p-5 bg-white/5 rounded-2xl border border-white/10">
-                   <div className="flex justify-between items-center">
-                      <label className="text-sm font-semibold text-text-secondary uppercase tracking-wide">Quality</label>
-                      <span className="px-3 py-1 bg-gradient-to-r from-accent-indigo to-accent-blue rounded-lg text-sm text-white font-semibold">{quality[0]}%</span>
-                   </div>
-                   <Slider
-                      value={quality}
-                      onValueChange={setQuality}
-                      min={10}
-                      max={100}
-                      step={1}
-                   />
-                </div>
-              )}
-
-              {!convertedBlob ? (
-                  <Button
-                    size="lg"
-                    className="w-full text-base shadow-glow"
-                    onClick={handleConvert}
-                    disabled={isConverting || !targetFormat}
+            {/* Format Selection */}
+            <div className="space-y-3">
+              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <Settings2 size={14} /> Target Format
+              </label>
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                {getAvailableFormats().map(fmt => (
+                  <button
+                    key={fmt}
+                    onClick={() => setTargetFormat(fmt)}
+                    className={cn(
+                      "px-3 py-2.5 rounded-lg text-sm font-medium transition-all border",
+                      targetFormat === fmt
+                        ? "bg-brand-blue text-white border-brand-blue"
+                        : "bg-white text-gray-700 border-gray-200 hover:border-brand-blue hover:text-brand-blue"
+                    )}
                   >
-                    {isConverting ? 'Processing...' : 'Convert Now'}
-                  </Button>
-              ) : (
-                   <div className="p-6 bg-emerald-500/10 rounded-2xl border border-emerald-500/30 flex flex-col items-center gap-5">
-                      <div className="flex items-center gap-2 text-text-primary font-semibold text-lg">
-                          <CheckCircle2 size={24} className="text-emerald-400" /> Conversion Complete
-                      </div>
-                      <Button
-                        size="lg"
-                        className="w-full"
-                        onClick={handleDownload}
-                      >
-                        <Download className="mr-2" size={20} /> Download Result
-                      </Button>
-                      <button
-                          onClick={() => setConvertedBlob(null)}
-                          className="text-sm font-medium text-text-muted hover:text-text-primary underline underline-offset-2 transition-colors"
-                      >
-                          Convert another file
-                      </button>
-                   </div>
-              )}
+                    {getFormatLabel(fmt)}
+                  </button>
+                ))}
+              </div>
             </div>
+
+            {/* Quality Slider for images */}
+            {activeTab === 'image' && ['jpg', 'webp'].includes(targetFormat) && (
+              <div className="space-y-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <div className="flex justify-between items-center">
+                  <label className="text-sm font-medium text-gray-700">Quality</label>
+                  <span className="px-2 py-0.5 bg-brand-blue text-white rounded text-sm font-medium">{quality[0]}%</span>
+                </div>
+                <Slider value={quality} onValueChange={setQuality} min={10} max={100} step={1} />
+              </div>
+            )}
+
+            {/* Convert / Download */}
+            {!convertedBlob ? (
+              <Button
+                size="lg"
+                className="w-full"
+                onClick={handleConvert}
+                disabled={isConverting || !targetFormat}
+              >
+                {isConverting ? 'Processing...' : 'Convert File'}
+              </Button>
+            ) : (
+              <div className="p-5 bg-green-50 rounded-lg border border-green-200 flex flex-col items-center gap-4">
+                <div className="flex items-center gap-2 text-green-700 font-medium">
+                  <CheckCircle2 size={20} /> Conversion Complete
+                </div>
+                <Button size="lg" className="w-full" onClick={handleDownload}>
+                  <Download className="mr-2" size={18} /> Download Result
+                </Button>
+                <button
+                  onClick={() => setConvertedBlob(null)}
+                  className="text-sm text-gray-500 hover:text-gray-700 underline transition-colors"
+                >
+                  Convert another file
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      {/* Hidden Input */}
       <input
         type="file"
         ref={fileInputRef}
         className="hidden"
-        accept={
-            activeTab === 'image' ? "image/*" :
-            activeTab === 'data' ? ".json,.csv,.txt" :
-            activeTab === 'document' ? ".pdf,.docx,.xlsx,.xls" :
-            "*"
-        }
-        onChange={(e) => {
-          if (e.target.files?.[0]) handleFileSelect(e.target.files[0]);
-        }}
+        accept={activeTab === 'image' ? "image/*" : activeTab === 'data' ? ".json,.csv,.txt" : ".pdf,.docx,.xlsx,.xls"}
+        onChange={(e) => { if (e.target.files?.[0]) handleFileSelect(e.target.files[0]); }}
       />
 
       {/* Loading Overlay */}
       {isConverting && (
-         <div className="fixed inset-0 bg-midnight/90 backdrop-blur-md z-50 flex items-center justify-center">
-             <div className="glass-strong p-10 rounded-3xl shadow-premium max-w-sm w-full space-y-6 text-center mx-4">
-                 <div className="w-16 h-16 border-4 border-accent-indigo border-t-accent-blue rounded-full animate-spin mx-auto" />
-                 <div className="space-y-2">
-                    <h3 className="text-2xl font-bold text-text-primary">Converting</h3>
-                    <p className="text-text-muted font-medium">Processing your file...</p>
-                 </div>
-                 <Progress value={progress} className="h-2" />
-             </div>
-         </div>
+        <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-white shadow-xl border border-gray-200 p-8 rounded-xl max-w-sm w-full space-y-5 text-center mx-4">
+            <div className="w-12 h-12 border-3 border-brand-blue border-t-transparent rounded-full animate-spin mx-auto" />
+            <div className="space-y-1">
+              <h3 className="text-xl font-semibold text-gray-900">Converting</h3>
+              <p className="text-gray-500 text-sm">Processing your file...</p>
+            </div>
+            <Progress value={progress} className="h-1.5" />
+          </div>
+        </div>
       )}
     </div>
   );
