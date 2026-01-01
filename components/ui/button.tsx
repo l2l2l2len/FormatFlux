@@ -9,24 +9,24 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', ...props }, ref) => {
     const variants = {
-      primary: 'bg-gradient-to-r from-accent-indigo to-accent-blue text-white hover:opacity-90 border border-white/10 shadow-glow-sm font-semibold',
-      secondary: 'glass text-text-primary hover:bg-white/10 border border-white/10 shadow-sm',
-      outline: 'border-2 border-white/20 bg-transparent hover:bg-white/10 text-text-primary font-semibold',
-      ghost: 'hover:bg-white/10 text-text-secondary hover:text-text-primary font-medium',
-      destructive: 'bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 font-medium',
+      primary: 'bg-brand-blue hover:bg-brand-blue-dark text-white font-medium',
+      secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 font-medium',
+      outline: 'border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium',
+      ghost: 'hover:bg-gray-100 text-gray-700 font-medium',
+      destructive: 'bg-red-500 hover:bg-red-600 text-white font-medium',
     };
 
     const sizes = {
-      sm: 'h-8 px-3 text-xs',
-      md: 'h-11 px-5 py-2 text-sm',
-      lg: 'h-14 px-8 text-base',
+      sm: 'h-8 px-3 text-sm',
+      md: 'h-10 px-4 text-sm',
+      lg: 'h-12 px-6 text-base',
     };
 
     return (
       <button
         ref={ref}
         className={cn(
-          'inline-flex items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-indigo focus-visible:ring-offset-2 focus-visible:ring-offset-midnight disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]',
+          'inline-flex items-center justify-center rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
           variants[variant],
           sizes[size],
           className
