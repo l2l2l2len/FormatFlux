@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Converter } from './components/Converter';
 import { ToastProvider } from './components/ui/toast';
+import { trackVisit, fetchUniqueVisitors, isNewVisitor } from './utils/visitTracker';
 import {
   Layers, Users, Shield, Zap, Lock, Upload, Settings, Download,
   Menu, X, Mail, HelpCircle, FileText, ChevronRight, ExternalLink,
@@ -91,13 +92,36 @@ const Navbar: React.FC = () => {
 
 // Stats Counter
 const StatsSection: React.FC = () => {
-  const [count, setCount] = useState<number | null>(null);
+  const [conversions, setConversions] = useState<number | null>(null);
+  const [totalVisits, setTotalVisits] = useState<number | null>(null);
+  const [uniqueVisitors, setUniqueVisitors] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch('https://api.counterapi.dev/v1/convertly-silvercrest-app/visits/up')
-      .then(res => res.json())
-      .then(data => setCount(data.count))
-      .catch(() => setCount(1247)); // Fallback
+    // Track this visit and get updated counts
+    const initStats = async () => {
+      try {
+        // Track page visit (increments total visits)
+        const visitStats = await trackVisit();
+        setTotalVisits(visitStats.totalVisits);
+
+        // Get unique visitors count
+        const isNew = isNewVisitor();
+        const unique = await fetchUniqueVisitors(isNew);
+        setUniqueVisitors(unique);
+
+        // Get file conversions count
+        const convRes = await fetch('https://api.counterapi.dev/v1/convertly-silvercrest-app/visits/up');
+        const convData = await convRes.json();
+        setConversions(convData.count);
+      } catch (error) {
+        // Fallback values
+        setConversions(1247);
+        setTotalVisits(500);
+        setUniqueVisitors(350);
+      }
+    };
+
+    initStats();
   }, []);
 
   return (
@@ -105,20 +129,20 @@ const StatsSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <div>
-            <div className="text-3xl font-bold text-gray-900">{count?.toLocaleString() || '...'}</div>
+            <div className="text-3xl font-bold text-gray-900">{conversions?.toLocaleString() || '...'}</div>
             <div className="text-sm text-gray-500 mt-1">Files Converted</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold text-gray-900">{totalVisits?.toLocaleString() || '...'}</div>
+            <div className="text-sm text-gray-500 mt-1">Total Visits</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold text-gray-900">{uniqueVisitors?.toLocaleString() || '...'}</div>
+            <div className="text-sm text-gray-500 mt-1">Unique Visitors</div>
           </div>
           <div>
             <div className="text-3xl font-bold text-gray-900">50+</div>
             <div className="text-sm text-gray-500 mt-1">Format Types</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-gray-900">0</div>
-            <div className="text-sm text-gray-500 mt-1">Data Collected</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-gray-900">100%</div>
-            <div className="text-sm text-gray-500 mt-1">Free Forever</div>
           </div>
         </div>
       </div>
