@@ -363,7 +363,7 @@ const Footer: React.FC = () => {
                 Free, private, and instant file conversion. All processing happens in your browser — your files never leave your device.
               </p>
               <p className="text-xs text-gray-500">
-                Made with care by Silvercrest Creative Studios
+                Made with care by Gregorious Creative Studios
               </p>
             </div>
 
