@@ -314,7 +314,7 @@ async function convertPdf(file: File, targetFormat: string): Promise<Blob> {
 
 // --- UTILS ---
 
-export function parseCSV(text: string): Record<string, string>[] {
+function parseCSV(text: string): Record<string, string>[] {
   const lines = text.trim().split(/\r?\n/);
   if (lines.length < 2) return [];
   const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
@@ -343,7 +343,7 @@ export function parseCSV(text: string): Record<string, string>[] {
   });
 }
 
-export function toCSV(data: any[]): string {
+function toCSV(data: any[]): string {
   if (data.length === 0) return '';
   const headers = Object.keys(data[0]);
   const csvRows = [headers.join(',')];

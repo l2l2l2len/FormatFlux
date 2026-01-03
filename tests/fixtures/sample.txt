@@ -1,3 +1,0 @@
-Line one of the text file
-Line two with some content
-Line three is the final line

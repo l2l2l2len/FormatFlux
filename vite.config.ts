@@ -18,11 +18,6 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
-      },
-      test: {
-        globals: true,
-        environment: 'happy-dom',
-        include: ['**/*.test.ts', '**/*.test.tsx'],
       }
     };
 });
