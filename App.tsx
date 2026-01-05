@@ -6,27 +6,79 @@ import {
   Menu, X, FileText, ChevronRight, ChevronDown,
   Image, FileSpreadsheet, File, CheckCircle, ArrowLeft,
   Keyboard, MessageCircle, Github,
-  BookOpen, AlertTriangle
+  BookOpen, AlertTriangle, Users, BarChart3
 } from 'lucide-react';
 
 // Types
 type Page = 'home' | 'about' | 'contact' | 'privacy' | 'terms' | 'help';
+
+// Counter API Configuration
+const COUNTER_API_BASE = 'https://api.counterapi.dev/v1';
+const COUNTER_NAMESPACE = 'convertly-app';
+const COUNTER_KEYS = {
+  VISITS: 'total-visits',
+  CONVERSIONS: 'total-conversions',
+  UNIQUE_VISITORS: 'unique-visitors',
+};
 
 // Local Storage Keys
 const STORAGE_KEYS = {
   CONVERSIONS: 'convertly_total_conversions',
   VISITS: 'convertly_total_visits',
   FIRST_VISIT: 'convertly_first_visit',
+  VISITOR_ID: 'convertly_visitor_id',
 };
 
-// Stats Utilities - Real local data only
+// Generate unique visitor ID
+const getOrCreateVisitorId = (): string => {
+  let visitorId = localStorage.getItem(STORAGE_KEYS.VISITOR_ID);
+  if (!visitorId) {
+    visitorId = `v_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    localStorage.setItem(STORAGE_KEYS.VISITOR_ID, visitorId);
+  }
+  return visitorId;
+};
+
+// Check if this is a new unique visitor
+const isNewUniqueVisitor = (): boolean => {
+  return !localStorage.getItem(STORAGE_KEYS.VISITOR_ID);
+};
+
+// Global Stats API Functions
+const fetchGlobalStat = async (key: string): Promise<number> => {
+  try {
+    const response = await fetch(`${COUNTER_API_BASE}/${COUNTER_NAMESPACE}/${key}`);
+    if (response.ok) {
+      const data = await response.json();
+      return data.count || 0;
+    }
+    return 0;
+  } catch {
+    return 0;
+  }
+};
+
+const incrementGlobalStat = async (key: string): Promise<number> => {
+  try {
+    const response = await fetch(`${COUNTER_API_BASE}/${COUNTER_NAMESPACE}/${key}/up`);
+    if (response.ok) {
+      const data = await response.json();
+      return data.count || 0;
+    }
+    return 0;
+  } catch {
+    return 0;
+  }
+};
+
+// Stats Utilities - Local data
 const getLocalStats = () => {
   const conversions = parseInt(localStorage.getItem(STORAGE_KEYS.CONVERSIONS) || '0', 10);
   const visits = parseInt(localStorage.getItem(STORAGE_KEYS.VISITS) || '0', 10);
   return { conversions, visits };
 };
 
-const incrementVisits = () => {
+const incrementLocalVisits = () => {
   const current = parseInt(localStorage.getItem(STORAGE_KEYS.VISITS) || '0', 10);
   localStorage.setItem(STORAGE_KEYS.VISITS, (current + 1).toString());
   if (!localStorage.getItem(STORAGE_KEYS.FIRST_VISIT)) {
@@ -35,10 +87,34 @@ const incrementVisits = () => {
   return current + 1;
 };
 
-export const incrementConversions = () => {
+// Track visit - both local and global
+const trackVisit = async (): Promise<{ globalVisits: number; uniqueVisitors: number }> => {
+  // Always increment local visits
+  incrementLocalVisits();
+
+  // Increment global visits
+  const globalVisits = await incrementGlobalStat(COUNTER_KEYS.VISITS);
+
+  // Check if new unique visitor
+  let uniqueVisitors = 0;
+  if (isNewUniqueVisitor()) {
+    getOrCreateVisitorId(); // Create the visitor ID
+    uniqueVisitors = await incrementGlobalStat(COUNTER_KEYS.UNIQUE_VISITORS);
+  } else {
+    uniqueVisitors = await fetchGlobalStat(COUNTER_KEYS.UNIQUE_VISITORS);
+  }
+
+  return { globalVisits, uniqueVisitors };
+};
+
+export const incrementConversions = async (): Promise<number> => {
+  // Increment local
   const current = parseInt(localStorage.getItem(STORAGE_KEYS.CONVERSIONS) || '0', 10);
   localStorage.setItem(STORAGE_KEYS.CONVERSIONS, (current + 1).toString());
-  return current + 1;
+
+  // Increment global
+  const globalCount = await incrementGlobalStat(COUNTER_KEYS.CONVERSIONS);
+  return globalCount;
 };
 
 // Keyboard Shortcuts Modal
@@ -301,31 +377,82 @@ const Navbar: React.FC<{
   );
 };
 
-// Stats Section - Real local data only
+// Stats Section - Global stats from all users
 const StatsSection: React.FC = () => {
-  const [stats, setStats] = useState({ conversions: 0, visits: 0 });
+  const [globalStats, setGlobalStats] = useState({
+    totalVisits: 0,
+    uniqueVisitors: 0,
+    totalConversions: 0,
+    loading: true,
+  });
 
   useEffect(() => {
-    const localStats = getLocalStats();
-    setStats(localStats);
+    const fetchStats = async () => {
+      try {
+        const [visits, visitors, conversions] = await Promise.all([
+          fetchGlobalStat(COUNTER_KEYS.VISITS),
+          fetchGlobalStat(COUNTER_KEYS.UNIQUE_VISITORS),
+          fetchGlobalStat(COUNTER_KEYS.CONVERSIONS),
+        ]);
+        setGlobalStats({
+          totalVisits: visits,
+          uniqueVisitors: visitors,
+          totalConversions: conversions,
+          loading: false,
+        });
+      } catch {
+        setGlobalStats(prev => ({ ...prev, loading: false }));
+      }
+    };
+    fetchStats();
   }, []);
 
   return (
     <section className="bg-gray-50 border-y border-gray-200 py-8" aria-labelledby="stats-heading">
-      <h2 id="stats-heading" className="sr-only">Your Usage Statistics</h2>
+      <h2 id="stats-heading" className="sr-only">Global Usage Statistics</h2>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-8 text-center">
-          <div>
-            <div className="text-3xl font-bold text-gray-900">{stats.conversions.toLocaleString()}</div>
-            <div className="text-sm text-gray-500 mt-1">Your Conversions</div>
+        <div className="text-center mb-4">
+          <p className="text-sm text-gray-500">Trusted by users worldwide</p>
+        </div>
+        <div className="grid grid-cols-3 gap-4 sm:gap-8 text-center">
+          <div className="p-4">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <BarChart3 size={18} className="text-brand-blue hidden sm:block" aria-hidden="true" />
+              <div className="text-2xl sm:text-3xl font-bold text-gray-900">
+                {globalStats.loading ? (
+                  <span className="inline-block w-16 h-8 bg-gray-200 animate-pulse rounded" />
+                ) : (
+                  globalStats.totalVisits.toLocaleString()
+                )}
+              </div>
+            </div>
+            <div className="text-xs sm:text-sm text-gray-500">Total Visits</div>
           </div>
-          <div>
-            <div className="text-3xl font-bold text-gray-900">{stats.visits.toLocaleString()}</div>
-            <div className="text-sm text-gray-500 mt-1">Your Visits</div>
+          <div className="p-4">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <Users size={18} className="text-brand-blue hidden sm:block" aria-hidden="true" />
+              <div className="text-2xl sm:text-3xl font-bold text-gray-900">
+                {globalStats.loading ? (
+                  <span className="inline-block w-16 h-8 bg-gray-200 animate-pulse rounded" />
+                ) : (
+                  globalStats.uniqueVisitors.toLocaleString()
+                )}
+              </div>
+            </div>
+            <div className="text-xs sm:text-sm text-gray-500">Unique Users</div>
           </div>
-          <div className="col-span-2 md:col-span-1">
-            <div className="text-3xl font-bold text-gray-900">Unlimited</div>
-            <div className="text-sm text-gray-500 mt-1">Free Forever</div>
+          <div className="p-4">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <CheckCircle size={18} className="text-brand-blue hidden sm:block" aria-hidden="true" />
+              <div className="text-2xl sm:text-3xl font-bold text-gray-900">
+                {globalStats.loading ? (
+                  <span className="inline-block w-16 h-8 bg-gray-200 animate-pulse rounded" />
+                ) : (
+                  globalStats.totalConversions.toLocaleString()
+                )}
+              </div>
+            </div>
+            <div className="text-xs sm:text-sm text-gray-500">Conversions</div>
           </div>
         </div>
       </div>
@@ -1216,9 +1343,9 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
-  // Track visits on mount
+  // Track visits on mount (both local and global)
   useEffect(() => {
-    incrementVisits();
+    trackVisit();
   }, []);
 
   // Global keyboard shortcuts
