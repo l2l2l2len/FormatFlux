@@ -584,18 +584,18 @@ const Footer: React.FC<{ onNavigate: (page: Page) => void }> = ({ onNavigate }) 
           <div>
             <h3 className="font-semibold text-white mb-4">Navigation</h3>
             <ul className="space-y-2 text-sm">
-              <li><button onClick={() => onNavigate('home')} className="hover:text-white transition-colors text-left">Home</button></li>
-              <li><button onClick={() => onNavigate('about')} className="hover:text-white transition-colors text-left">About</button></li>
-              <li><button onClick={() => onNavigate('help')} className="hover:text-white transition-colors text-left">Help</button></li>
-              <li><button onClick={() => onNavigate('contact')} className="hover:text-white transition-colors text-left">Contact</button></li>
+              <li><button onClick={() => onNavigate('home')} className="hover:text-white transition-colors text-left py-2 min-h-[44px]">Home</button></li>
+              <li><button onClick={() => onNavigate('about')} className="hover:text-white transition-colors text-left py-2 min-h-[44px]">About</button></li>
+              <li><button onClick={() => onNavigate('help')} className="hover:text-white transition-colors text-left py-2 min-h-[44px]">Help</button></li>
+              <li><button onClick={() => onNavigate('contact')} className="hover:text-white transition-colors text-left py-2 min-h-[44px]">Contact</button></li>
             </ul>
           </div>
 
           <div>
             <h3 className="font-semibold text-white mb-4">Legal</h3>
             <ul className="space-y-2 text-sm">
-              <li><button onClick={() => onNavigate('privacy')} className="hover:text-white transition-colors text-left">Privacy Policy</button></li>
-              <li><button onClick={() => onNavigate('terms')} className="hover:text-white transition-colors text-left">Terms of Service</button></li>
+              <li><button onClick={() => onNavigate('privacy')} className="hover:text-white transition-colors text-left py-2 min-h-[44px]">Privacy Policy</button></li>
+              <li><button onClick={() => onNavigate('terms')} className="hover:text-white transition-colors text-left py-2 min-h-[44px]">Terms of Service</button></li>
             </ul>
           </div>
         </div>
@@ -784,7 +784,7 @@ const ContactPage: React.FC<{ onNavigate: (page: Page) => void }> = ({ onNavigat
                 </p>
                 <button
                   onClick={() => { setSubmitted(false); setFormState({ name: '', email: '', message: '' }); }}
-                  className="mt-4 text-brand-blue hover:underline"
+                  className="mt-4 text-brand-blue hover:underline min-h-[44px] py-2"
                 >
                   Send another message
                 </button>
@@ -1074,7 +1074,7 @@ const PrivacyPage: React.FC<{ onNavigate: (page: Page) => void }> = ({ onNavigat
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-3">Contact</h2>
           <p className="text-gray-600 leading-relaxed">
-            If you have questions about this privacy policy, please visit our <button onClick={() => onNavigate('contact')} className="text-brand-blue hover:underline">Contact page</button>.
+            If you have questions about this privacy policy, please visit our <button onClick={() => onNavigate('contact')} className="text-brand-blue hover:underline inline-flex items-center py-1">Contact page</button>.
           </p>
         </section>
       </div>
@@ -1179,7 +1179,7 @@ const TermsPage: React.FC<{ onNavigate: (page: Page) => void }> = ({ onNavigate 
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-3">Contact</h2>
           <p className="text-gray-600 leading-relaxed">
-            If you have questions about these terms, please visit our <button onClick={() => onNavigate('contact')} className="text-brand-blue hover:underline">Contact page</button>.
+            If you have questions about these terms, please visit our <button onClick={() => onNavigate('contact')} className="text-brand-blue hover:underline inline-flex items-center py-1">Contact page</button>.
           </p>
         </section>
       </div>
